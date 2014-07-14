@@ -1,0 +1,121 @@
+#include "ORFile.h"
+
+#include <iostream>
+#include <fstream>
+#include <unistd.h>
+#include <exception>
+#include <string>
+
+static inline unsigned SwapWord(const unsigned& word)
+{
+    return (
+        ((word & 0xff000000) >> 24) |
+        ((word & 0x00ff0000) >> 8) |
+        ((word & 0x0000ff00) << 8) |
+        ((word & 0x000000ff) << 24)
+    );
+}
+
+static const unsigned bitShortForm = 0x80000000;
+static const unsigned maskShortFormDataId = 0xfc000000;
+static const unsigned shiftShortFormDataId = 0;
+static const unsigned maskLongFormDataId = 0xfffc0000;
+static const unsigned shiftLongFormDataId = 0;
+static const unsigned maskShortFormData = 0x03ffffff;
+static const unsigned shiftShortFormData = 0;
+static const unsigned maskLongFormDataLength = 0x0003ffff;
+static const unsigned shiftLongFormDataLength = 0;
+
+OrcaRoot::ORFile::ORFile(std::string& filepath){
+	fInput = new std::ifstream(filepath.c_str());
+}
+
+OrcaRoot::ORFile::~ORFile(){
+	delete fInput;
+    delete fHeader;
+}
+
+bool OrcaRoot::ORFile::Read(void* buffer, size_t size)
+{
+    if (! (fInput && *fInput))
+        return false;
+    if(fInput->eof() ) return false;
+
+    int remainingSize = size;
+    char* bufferPtr = reinterpret_cast<char*>(buffer);
+    while (remainingSize > 0) {
+        fInput->read(bufferPtr, remainingSize);
+        int readSize = fInput->gcount();
+        if (readSize > 0) {
+            bufferPtr += readSize;
+            remainingSize -= readSize;
+        }
+        if ((remainingSize > 0) && fInput->eof()) {
+            fInput->clear();
+            return false;
+        }
+    }
+    return (remainingSize == 0);
+}
+
+
+void OrcaRoot::ORFile::Initialize(){
+	unsigned int headerLen, headerSize;
+	bool isBigEndian;
+	isBigEndian = this->Read(&headerLen, sizeof(unsigned int) );
+	isBigEndian = isBigEndian && this->Read(&headerSize, sizeof(unsigned int) );
+	if(!isBigEndian){
+		std::cout<<"Not an orca file, or trouble reading from file"<<std::endl;
+		throw std::exception();
+	}
+
+	//Check for endianness
+	if (headerLen & 0xffff0000) {
+        fIsBigEndian = true;
+        headerLen = SwapWord(headerLen);
+        headerSize = SwapWord(headerSize);
+    }
+    else
+        fIsBigEndian = false;
+
+    char* buffer = new char[headerLen*4];
+    this->Read(buffer, 4*(headerLen-2));
+    buffer[headerSize]='\0';
+
+    std::string header = buffer;
+
+    fHeader = new ORHeader(header);
+
+    delete[] buffer;
+}
+
+//Each set of data should contain an id (with length), a crate a card and the rest of the data stored as a vector
+bool OrcaRoot::ORFile::GetNextData(unsigned int& dataId, std::vector<unsigned>& data){
+    data.clear();
+
+    //process the first word
+    if(!(this->Read(&fCurrentWord, sizeof(unsigned int) )) ){
+        return false;
+    }
+    if(fIsBigEndian)
+        fCurrentWord = SwapWord(fCurrentWord);
+    if(fCurrentWord & bitShortForm) {
+        dataId = (fCurrentWord & maskShortFormDataId) >> shiftShortFormDataId;
+        data.push_back( (fCurrentWord & maskShortFormData) >> shiftShortFormData );
+    }
+    else {
+        dataId = (fCurrentWord & maskLongFormDataId) >> shiftLongFormDataId;
+        unsigned int length = (fCurrentWord & maskLongFormDataLength) >> shiftLongFormDataLength;
+        length -= 1;
+        data.resize(length);
+        for(std::vector<unsigned>::iterator it = data.begin(); it!=data.end(); ++it){
+            if(! this->Read(&fCurrentWord, sizeof(unsigned int))){
+                return false;
+            }            
+            if(fIsBigEndian) fCurrentWord = SwapWord(fCurrentWord);
+            (*it) = fCurrentWord;
+        }
+    }
+    return true;
+}
+
