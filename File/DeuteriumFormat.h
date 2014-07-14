@@ -1,17 +1,17 @@
-#ifndef ORFile_h_
-#define ORFile_h_
+#ifndef DeuteriumFormat_h_
+#define DeuteriumFormat_h_
 
 #include <iostream>
 #include <fstream>
 #include <vector>
 #include <string>
 
-namespace OrcaRoot{
-	class ORFile{
+namespace Deuterium{
+	class DeuteriumFormat{
 	public:
-		ORFile(std::string& filepath);
-		virtual ~ORFile();
-		ORHeader* GetHeader(){return fHeader;}
+		DeuteriumFormat(std::string& filepath);
+		virtual ~DeuteriumFormat();
+		std::string* GetHeader(){return fHeader;}
 		void Initialize();
 		bool Read(void* buffer, size_t len);
 		bool GetNextData(unsigned int& dataId, std::vector<unsigned int>& data);
@@ -23,4 +23,4 @@ namespace OrcaRoot{
 	};
 }
 
-#endif //ORFile_h_
+#endif //DeuteriumFormat_h_

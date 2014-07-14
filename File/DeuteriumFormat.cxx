@@ -1,4 +1,5 @@
-#include "ORFile.h"
+#include "File.h"
+#include "DeuteriumFormat.h"
 
 #include <iostream>
 #include <fstream>
@@ -26,16 +27,16 @@ static const unsigned shiftShortFormData = 0;
 static const unsigned maskLongFormDataLength = 0x0003ffff;
 static const unsigned shiftLongFormDataLength = 0;
 
-OrcaRoot::ORFile::ORFile(std::string& filepath){
+Deuterium::File::File(std::string& filepath){
 	fInput = new std::ifstream(filepath.c_str());
 }
 
-OrcaRoot::ORFile::~ORFile(){
+Deuterium::File::~File(){
 	delete fInput;
     delete fHeader;
 }
 
-bool OrcaRoot::ORFile::Read(void* buffer, size_t size)
+bool Deuterium::File::Read(void* buffer, size_t size)
 {
     if (! (fInput && *fInput))
         return false;
@@ -59,7 +60,7 @@ bool OrcaRoot::ORFile::Read(void* buffer, size_t size)
 }
 
 
-void OrcaRoot::ORFile::Initialize(){
+void Deuterium::File::Initialize(){
 	unsigned int headerLen, headerSize;
 	bool isBigEndian;
 	isBigEndian = this->Read(&headerLen, sizeof(unsigned int) );
@@ -90,7 +91,7 @@ void OrcaRoot::ORFile::Initialize(){
 }
 
 //Each set of data should contain an id (with length), a crate a card and the rest of the data stored as a vector
-bool OrcaRoot::ORFile::GetNextData(unsigned int& dataId, std::vector<unsigned>& data){
+bool Deuterium::File::GetNextData(unsigned int& dataId, std::vector<unsigned>& data){
     data.clear();
 
     //process the first word
