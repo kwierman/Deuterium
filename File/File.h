@@ -1,6 +1,9 @@
 #ifndef Deuterium_File_h_
 #define Deuterium_File_h_
 
+#include <ifstream>
+#include <string>
+
 namespace Deuterium{
 
 	namespace File{
