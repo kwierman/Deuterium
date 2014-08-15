@@ -1,4 +1,4 @@
 Deuterium
 -----------------------
 
-Higher level mathematical objects for Tritium Support
+File system and scripting support for Tritium Libraries
