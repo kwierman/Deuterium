@@ -27,6 +27,8 @@ static const unsigned shiftShortFormData = 0;
 static const unsigned maskLongFormDataLength = 0x0003ffff;
 static const unsigned shiftLongFormDataLength = 0;
 
+
+/*
 Deuterium::File::File(std::string& filepath){
 	fInput = new std::ifstream(filepath.c_str());
 }
@@ -120,3 +122,4 @@ bool Deuterium::File::GetNextData(unsigned int& dataId, std::vector<unsigned>& d
     return true;
 }
 
+*/

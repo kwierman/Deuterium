@@ -5,57 +5,88 @@
 #include <string>
 #include <vector>
 
-#include "Deuterium/File/File.h"
+#include "Deuterium/FileSystem/File.h"
+#include "Protium/Threads/ThreadingPolicy.h"
+#include "Protium/Threads/Mutex.h"
+
 
 namespace Deuterium{
 
-	namespace File{
+	namespace FileSystem{
 
+
+		//! Implementation of directory methods
 		class Directory{
-			Dir* currentDir;
-			struct dirent *currentEnt;
-			bool exists;
-			std::vector<Directory> owned_dirs;
-			std::vector<File> owned_files;
 
-		public: 
-			Directory() : currentDir(NULL) , currentEnt(NULL), exists(FALSE) {}
+			//! Data for holding directory information
+			DIR* fDir;
 
-			Directory(const std::string& directoryName) : Directory() {
-				currentDir = opendir(directoryName.c_str());
+			//! Data for holding directory content information
+			struct dirent *fDirectoryEntry;
 
-				exists = (currentDir);
+			//! Invalidates directory if non existent
+			bool fIsValid;
 
+			//! Holds content directory information
+			std::vector<Directory> fDirEntries;
+
+			//! Holds content file information
+			std::vector<File> fFileEntries;
+
+			//! Directory Name
+			std::string fDirName;
+
+		public:
+			//! Default directory constructor
+			Directory() : fDir(NULL), fDirectoryEntry(NULL), fIsValid(false) {}
+
+			//! Construct directory with name
+			Directory(const std::string& dirName ) : fDir(NULL), fDirectoryEntry(NULL), fIsValid(false) {
+				fDir = opendir(dirName.c_str() );
+				fIsValid = (fDir);
+				fDirName = dirName;
 			}
 
-			bool IsValid(){return exists;}
+			Directory(const Directory& other): fDir(NULL), fDirectoryEntry(NULL), fIsValid(false){
+				fDirName = other.GetName();
+				fDir = opendir( fDirName.c_str() );
+				fIsValid = (fDir);
+			}
 
 			~Directory(){
-				if(currentDir)
-					closedir(currentDir);
-
+				if(fDir) closedir(fDir);
 			}
 
+			std::string GetName() const{
+				return fDirName;
+			}
+
+			//! Determines validity
+			inline bool IsValid(){return fIsValid;}
+
 		    bool Read(){
-		    	while(currentEnt = readdir(currentDir) ){
-					std::string item = currentEnt->d_name;
+		    	while(fDirectoryEntry = readdir(fDir) ){
+					std::string item = fDirectoryEntry->d_name;
 
 					//see if this is a directory
 					Directory temp(item);
 					if(temp.IsValid() )
-						owned_dirs.push_back(temp);
-					else:
-						owned_files.push_back( File(item) ); 
+						fDirEntries.push_back(temp);
+					else
+						fFileEntries.push_back( File(item) ); 
 		    	}
 			}
 
-			unsigned GetNDirs(){return owned_dirs.size(); }
-			unsigned GetNFiles(){return owned_files.size(); }
+			unsigned GetNDirs(){return fDirEntries.size(); }
+			unsigned GetNFiles(){return fFileEntries.size(); }
 
-			File FileAt(unsigned i){return owned_files[i];}
-			File DirAt(unsigned i){return owned_dirs[i]; }
+			File FileAt(unsigned i){return fFileEntries[i];}
+			Directory DirAt(unsigned i){return fDirEntries[i]; }
+
 
 		};
+
+
 	}
 }
 

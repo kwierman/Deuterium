@@ -6,6 +6,7 @@
 #include <vector>
 #include <string>
 
+/*
 namespace Deuterium{
 	class DeuteriumFormat{
 	public:
@@ -22,5 +23,5 @@ namespace Deuterium{
 		unsigned int fCurrentWord;
 	};
 }
-
+*/
 #endif //DeuteriumFormat_h_
