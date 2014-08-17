@@ -83,10 +83,12 @@ namespace Deuterium{
 			File FileAt(unsigned i){return fFileEntries[i];}
 			Directory DirAt(unsigned i){return fDirEntries[i]; }
 
+			//! Get back the absolute path
+			std::string GetAbsolutePath(){
 
+
+			}
 		};
-
-
 	}
 }
 

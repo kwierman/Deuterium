@@ -25,6 +25,13 @@ namespace Deuterium{
 
 			std::string GetName()const {return fName;}
 		};
+
+
+
+		template< template<class, class> class ThreadingPolicy = Protium::Threads::InstanceLocked>
+		class File
+
+
 	}
 }
 
