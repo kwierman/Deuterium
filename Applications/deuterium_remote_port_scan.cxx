@@ -5,13 +5,20 @@
 #include <vector>
 
 using Deuterium::DataFormat::StringParser;
-using Deuterium::Networking::TCPClientSocket;
+using Deuterium::Networking::TransmitterSocket;
 //using Deuterium::Networking::Socket;
 
 //using Deuterium::Networking::Client;
 
 
 int main(int argc, char* argv[]){
+
+	TransmitterSocket socket;
+	//std::cout<<"SocketInfo: "<<socket.GetLocalAddress()<<" : "<<socket.GetLocalPort()<<std::endl;
+	//socket.RebindToLocalPortAddress(1080,"127.0.0.1");
+	//std::cout<<"SocketInfo: "<<socket.GetLocalAddress()<<" : "<<socket.GetLocalPort()<<std::endl;
+	//socket.RebindToLocalPortAddress(1100,"0.0.0.1");
+	//std::cout<<"SocketInfo: "<<socket.GetLocalAddress()<<" : "<<socket.GetLocalPort()<<std::endl;
 
 	//Enter in the remote address
 	std::cout<<"Please Enter Remote Server Address: "<<std::endl;
@@ -27,10 +34,13 @@ int main(int argc, char* argv[]){
 	std::cin >> port_list;
 
 	//socket.SetLocalPort(120);//why not
+
+	StringParser<unsigned> parser(port_list);
+	std::vector<unsigned> ports = parser.delimit(',').makerange('-').AsVector();
+
 	
 	for(std::vector<unsigned>::iterator it = ports.begin(); it!= ports.end(); ++it){
-		TCPClientSocket socket(address, (*it));
-		if(scoket.connect(address, (*it) ) )
+		if(socket.Connect( (*it), address ) )
 			std::cout<<"Port: "<<(*it)<<" Open"<<std::endl;
 	}
 	
