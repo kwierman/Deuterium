@@ -1,7 +1,7 @@
 #ifndef Deuterium_NetworkUtilities_h_
 #define Deuterium_NetworkUtilities_h_
 
-class std::string;
+#include <string>
 
 #include <netinet/in.h>      // For sockaddr_in
 

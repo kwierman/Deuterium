@@ -11,5 +11,5 @@ set_target_properties(DeuteriumDataFormat PROPERTIES LINKER_LANGUAGE CXX)
 install(TARGETS DeuteriumDataFormat DESTINATION lib EXPORT DeuteriumConfig)
 
 #Install Headers
-install(FILES ${module_headers} DESTINATION include/Deuterium/FileSystem)
+install(FILES ${module_headers} DESTINATION include/Deuterium/DataFormat)
 

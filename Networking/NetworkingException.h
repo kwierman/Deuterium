@@ -8,9 +8,9 @@ namespace Deuterium{
 
 	namespace Networking{
 
-		class NetworkingException : public exception {
+		class NetworkingException : public std::exception {
 		public:
-			NetworkingException(const string &message, bool inclSysMsg = false) throw();
+			NetworkingException(const std::string &message, bool inclSysMsg = false) throw();
 			~NetworkingException() throw();	
 			const char *what() const throw();
 		private:

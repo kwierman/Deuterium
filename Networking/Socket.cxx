@@ -1,4 +1,4 @@
-#include "Deutrium/Networking/Socket.h"
+#include "Deuterium/Networking/Socket.h"
 
 #include <sys/types.h>       // For data types
 #include <sys/socket.h>      // For socket(), connect(), send(), and recv()
@@ -11,31 +11,31 @@
 typedef void raw_type;       // Type used for raw data on this platform
 
 
-
-Deuterium::Networking::Socket::Socket(int type, int protocol) throw(NetworkingException) {
+Deuterium::Networking::SocketPrototype::SocketPrototype(int type, int protocol) throw(NetworkingException) {
   if ((sockDesc = socket(PF_INET, type, protocol)) < 0) {
     throw NetworkingException("Socket creation failed (socket())", true);
   }
 }
 
-Deuterium::Networking::Socket::Socket(int sockDesc) {
+Deuterium::Networking::SocketPrototype::SocketPrototype(int sockDesc) {
   this->sockDesc = sockDesc;
 }
 
-Deuterium::Networking::Socket::~Socket() {
+Deuterium::Networking::SocketPrototype::~SocketPrototype() {
   close(sockDesc);
   sockDesc = -1;
 }
 
-std::string Deuterium::Networking::Socket::getLocalAddress() throw(NetworkingException) {
+std::string Deuterium::Networking::SocketPrototype::GetLocalAddress() throw(NetworkingException) {
   sockaddr_in addr;
   unsigned int addr_len = sizeof(addr);
 
   if (getsockname(sockDesc, (sockaddr *) &addr, (socklen_t *) &addr_len) < 0) {
-    throw SocketException("Fetch of local address failed (getsockname())", true);
+    throw NetworkingException("Fetch of local address failed (getsockname())", true);
   }
   return inet_ntoa(addr.sin_addr);
 }
+
 
 unsigned short Socket::getLocalPort() throw(SocketException) {
   sockaddr_in addr;
@@ -71,24 +71,17 @@ void Socket::setLocalAddressAndPort(const string &localAddress,
   }
 }
 
-void Socket::cleanUp() throw(SocketException) {
-  #ifdef WIN32
-    if (WSACleanup() != 0) {
-      throw SocketException("WSACleanup() failed");
-    }
-  #endif
-}
 
 unsigned short Socket::resolveService(const string &service,
                                       const string &protocol) {
-  struct servent *serv;        /* Structure containing service information */
+  struct servent *serv; 
 
   if ((serv = getservbyname(service.c_str(), protocol.c_str())) == NULL)
-    return atoi(service.c_str());  /* Service is port number */
+    return atoi(service.c_str());
   else 
-    return ntohs(serv->s_port);    /* Found port (network byte order) by name */
+    return ntohs(serv->s_port);  
 }
-
+/*
 // CommunicatingSocket Code
 
 CommunicatingSocket::CommunicatingSocket(int type, int protocol)  
@@ -295,3 +288,4 @@ void UDPSocket::leaveGroup(const string &multicastGroup) throw(SocketException) 
     throw SocketException("Multicast group leave failed (setsockopt())", true);
   }
 }
+*/

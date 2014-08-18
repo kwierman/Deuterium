@@ -1,12 +1,13 @@
 #include "Deuterium/DataFormat/StringParser.h"
-//#include "Deuterium/Networking/Socket.h"
+#include "Deuterium/Networking/Socket.h"
 
 #include <iostream>
 #include <vector>
 
 using Deuterium::DataFormat::StringParser;
+using Deuterium::Networking::TCPClientSocket;
 //using Deuterium::Networking::Socket;
-//using Deuterium::Networking::TCPSocket;
+
 //using Deuterium::Networking::Client;
 
 
@@ -24,19 +25,13 @@ int main(int argc, char* argv[]){
 
 	std::string port_list;
 	std::cin >> port_list;
-	std::vector<unsigned> ports = StringParser<unsigned>(port_list).delimit(',').makerange('-').AsVector();
-	for(std::vector<unsigned>::iterator it = ports.begin(); it!= ports.end(); ++it){	
-		std::cout<<(*it)<<std::endl;
-	}
 
-	/*
-	//create the socket
-	TCPClientSocket socket;
-	socket.SetLocalPort(120);//why not
-
+	//socket.SetLocalPort(120);//why not
+	
 	for(std::vector<unsigned>::iterator it = ports.begin(); it!= ports.end(); ++it){
+		TCPClientSocket socket(address, (*it));
 		if(scoket.connect(address, (*it) ) )
 			std::cout<<"Port: "<<(*it)<<" Open"<<std::endl;
 	}
-	*/
+	
 }

@@ -1,7 +1,9 @@
 #include "Deuterium/Networking/NetworkingException.h"
 
+#include <errno.h>           // For errno
+#include <string.h>
 
-Deuterium::Networking::NetworkingException::NetworkingException(const string &message, bool inclSysMsg)
+Deuterium::Networking::NetworkingException::NetworkingException(const std::string &message, bool inclSysMsg)
   throw() : userMessage(message) {
   if (inclSysMsg) {
     userMessage.append(": ");
