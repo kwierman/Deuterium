@@ -4,8 +4,8 @@
 namespace Deuterium{
 namespace Networking{
     
+    //! Defines pure abstract class for 
     class SocketPrototype{
-      //Data-members
 
       ~SocketPrototype();
       std::string GetLocalAddress() throw(NetworkingException);
@@ -21,6 +21,18 @@ namespace Networking{
       SocketPrototype(int type, int protocol) throw(NetworkingException);
       SocketPrototype(int sockDesc);
     };
+
+    class Client{
+
+    };
+
+    class Server{
+
+    };
+
+
+    template<class ProtocolType=TCPSocket, class SocketType=Client >
+
   }
 }
 

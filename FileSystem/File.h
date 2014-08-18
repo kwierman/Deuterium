@@ -28,8 +28,8 @@ namespace Deuterium{
 
 
 
-		template< template<class, class> class ThreadingPolicy = Protium::Threads::InstanceLocked>
-		class File
+		//template< template<class, class> class ThreadingPolicy = Protium::Threads::InstanceLocked>
+		//class File
 
 
 	}

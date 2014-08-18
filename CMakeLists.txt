@@ -43,6 +43,7 @@ endif()
 # Locate sources and headers for this project
 include_directories(${PROJECT_SOURCE_DIR}/..)
 add_subdirectory(FileSystem)
+add_subdirectory(DataFormat)
 #add_subdirectory(Threads)
 #add_subdirectory(Singleton)
 #add_subdirectory(Allocation)
