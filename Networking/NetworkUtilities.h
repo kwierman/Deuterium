@@ -21,7 +21,9 @@ namespace Deuterium{
   if ((host = gethostbyname(address.c_str())) == NULL) {
     // strerror() will not work for gethostbyname() and hstrerror() 
     // is supposedly obsolete
-    throw NetworkingException("Failed to resolve name (gethostbyname())");
+    std::string problem = "Failed to resolve name (gethostbyname())";
+    problem+=address;
+    throw NetworkingException(problem.c_str());
   }
   addr.sin_addr.s_addr = *((unsigned long *) host->h_addr_list[0]);
 

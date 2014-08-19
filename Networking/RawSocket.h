@@ -1,6 +1,17 @@
 #ifndef Deuterium_RawSocket_h_
 #define Deuterium_RawSocket_h_
 
+#include "Deuterium/Networking/Socket.h"
+
+#include <vector>
+#include <iostream>
+
+#include <netinet/ip_icmp.h>
+#include <netinet/ip.h>
+#include <netinet/udp.h>
+#include <netinet/tcp.h>
+
+
 #define PCKT_LEN 8192
 
 
@@ -16,6 +27,7 @@
 
 namespace Deuterium{
 	namespace Networking{
+
 		struct ipv4header {
 			unsigned char      iph_ihl:5,// Internet Header Length, the number of 32-bit words in the header (count them, there's 5 in IPV4), unless options specify otherwise
 							   iph_ver:4;//ip version, usually 4
@@ -121,44 +133,80 @@ Type 253 — RFC3692-style Experiment 1
 */
 
 		//! Raw Socket allows us to implement our own version of the header scheme for connections
+		//! \warning RAW SOCKETS CAN ONLY BE USED BY ROOT USER
 		class RawSocketImpl : public SocketPrototype<RawSocket>{
+		public:
 			//! Data for the sender info
 			sockaddr_in fLocalInfo;
 			//! Data for the receiver info
 			sockaddr_in fRemoteInfo;
+			//! Buffer Data
+			char* fBuffer;
 
-			RawSocketImpl(){
+
+			RawSocketImpl() : SocketPrototype()  {//: fBuffer(65536)
 				//TODO: Change this up to 
-				fSockDesc=socket(PF_INET, SOCK_RAW, IPPROTO_UDP);
-				fLocalInfo.sin_family = AF_INET;
-				fRemoteInfo.sin_family = AF_INET;
+				//fSockDesc=socket(PF_INET, SOCK_RAW, IPPROTO_TCP);
+				//fLocalInfo.sin_family = AF_INET;
+				//fRemoteInfo.sin_family = AF_INET;
+				fBuffer = new  char[65536];
 
+				std::cout<<"In raw socket implementation default constructor"<<std::endl;
+
+			}
+
+			~RawSocketImpl(){
+				delete fBuffer;
 			}
 
 			void SetLocalPortAddress(const unsigned short& port, const std::string& address){
 				fLocalInfo.sin_addr.s_addr = htons(port);
+				//Setup the local address
 			}
 
 			void SetRemotePortAddress(const unsigned short& port, const std::string& address){
 				fRemoteInfo.sin_addr.s_addr = htons(port);
+				//Setup the remote address
 			}
 
 			void SetupKernel(){
 				//inform the kernel that we're using our own headers
-				setsockopt(sd, IPPROTO_IP, IP_HDRINCL, val, sizeof(one));
+				int one=1;
+				const int* val=&one; 
+				setsockopt(fSockDesc, IPPROTO_IP, IP_HDRINCL, val, sizeof(one));
 			}
 
 			void SendTo(void* buffer, unsigned bufferLen){
-				sendto(sd, buffer, ip->iph_len, 0, (struct sockaddr *)&sin, sizeof(sin))
+				//sendto(fLocalInfo, buffer, ip->iph_len, 0, (struct sockaddr *)&sin, sizeof(sin))
 			}
 
+			void GetNext(){
+				//his should be implemented to
+				std::cout<<"Socket Descrp: "<<fSockDesc<<std::endl;
+		        sockaddr_in addr;
+		        unsigned int addr_len = sizeof(addr);
+		        if (getsockname(fSockDesc, (sockaddr *) &addr, (socklen_t *) &addr_len) < 0)
+		          throw NetworkingException("Get Next of local information failed (getsockname())", true);
+		        fLocalAddress=inet_ntoa(addr.sin_addr);
+		        fLocalPort=ntohs(addr.sin_port);
+		        std::cout<<"Waiting For Data: "<<std::endl;
+				int datasize = recvfrom(fSockDesc , &fBuffer[0] , 65536*sizeof(char) , 0 , (sockaddr*)&fRemoteInfo , &addr_len);
+				std::cout<<"DataSize: "<<datasize<<std::endl;
+			}
+
+			struct iphdr* GetCurrentIPHeader(){
+				return (iphdr*)&fBuffer[0];
+			}	
+
+			std::string GetRemoteAddress(){
+				return std::string(inet_ntoa(fRemoteInfo.sin_addr));
+			}		
+			unsigned short GetRemotePort(){
+				return ntohs(fRemoteInfo.sin_port);
+			}		
 
 		};
-
-
-		class 
 	}
-
 }
 
 #endif //File guardian

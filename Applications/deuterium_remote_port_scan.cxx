@@ -21,6 +21,8 @@ int main(int argc, char* argv[]){
 	//std::cout<<"SocketInfo: "<<socket.GetLocalAddress()<<" : "<<socket.GetLocalPort()<<std::endl;
 
 	//Enter in the remote address
+	std::cout<<"Local Server Info: "<<socket.GetLocalAddress()<<" : "<<socket.GetLocalPort()<<std::endl;
+
 	std::cout<<"Please Enter Remote Server Address: "<<std::endl;
 	std::string address;
 	std::cin >> address;

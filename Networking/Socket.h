@@ -3,6 +3,7 @@
 #include "Deuterium/Networking/NetworkingException.h"
 #include "Deuterium/Networking/NetworkUtilities.h"
 
+
 #include <sys/types.h>       // For data types
 #include <sys/socket.h>      // For socket(), connect(), send(), and recv()
 #include <netdb.h>           // For gethostbyname()
@@ -24,7 +25,7 @@ namespace Deuterium{
     struct InValidSocket{};
 
     struct RawSocket{
-      enum{type=SOCK_RAW, protocol=IPPROTO_RAW}; 
+      enum{type=SOCK_RAW, protocol=IPPROTO_TCP}; 
     };
     struct TCPSocket{
       enum{type=SOCK_STREAM, protocol=IPPROTO_TCP};
@@ -48,12 +49,14 @@ namespace Deuterium{
       bool fIsPortValid;
 
       //!Default constructor uses template to create socket type,protocol
-      SocketPrototype()throw(NetworkingException){
+      SocketPrototype() throw(NetworkingException) : fSockDesc(-1) {
+        std::cout<<"In Socket Prototype "<<std::endl;
         fIsPortValid=false;
         fSockDesc =socket(PF_INET, SocketType::type, SocketType::protocol);
+        std::cout<<fSockDesc<<std::endl;
         fIsPortValid = (fSockDesc>=0);
-        if(! fIsPortValid) return;
-        GetLocalInformation();
+        //if(! fIsPortValid) return;
+        SocketPrototype::GetLocalInformation();
       }
       SocketPrototype(const int& socketDesc){
         fSockDesc = socketDesc;
@@ -70,10 +73,12 @@ namespace Deuterium{
       void GetLocalInformation(){
         sockaddr_in addr;
         unsigned int addr_len = sizeof(addr);
+
         if (getsockname(fSockDesc, (sockaddr *) &addr, (socklen_t *) &addr_len) < 0)
           throw NetworkingException("Fetch of local information failed (getsockname())", true);
         fLocalAddress=inet_ntoa(addr.sin_addr);
         fLocalPort=ntohs(addr.sin_port);
+        std::cout<<"Local Information: "<<fLocalAddress<<" : "<<fLocalPort<<std::endl;
       }
       //! Gets local Address
       std::string GetLocalAddress(){return fLocalAddress;}
