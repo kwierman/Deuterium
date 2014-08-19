@@ -23,6 +23,9 @@ namespace Deuterium{
     //!Null Socket Type
     struct InValidSocket{};
 
+    struct RawSocket{
+      enum{type=SOCK_RAW, protocol=IPPROTO_RAW}; 
+    };
     struct TCPSocket{
       enum{type=SOCK_STREAM, protocol=IPPROTO_TCP};
     };
