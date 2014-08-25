@@ -10,9 +10,9 @@
 #include "Protium/Threads/Mutex.h"
 
 
-namespace Deuterium{
+namespace Deuterium {
 
-	namespace FileSystem{
+	namespace FileSystem {
 
 
 		//! Implementation of directory methods
@@ -85,8 +85,6 @@ namespace Deuterium{
 
 			//! Get back the absolute path
 			std::string GetAbsolutePath(){
-
-
 			}
 		};
 	}

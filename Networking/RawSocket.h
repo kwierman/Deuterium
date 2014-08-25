@@ -6,10 +6,10 @@
 #include <vector>
 #include <iostream>
 
-#include <netinet/ip_icmp.h>
-#include <netinet/ip.h>
-#include <netinet/udp.h>
-#include <netinet/tcp.h>
+#include <netinet/ip_icmp.h>//for icmp header
+#include <netinet/ip.h>//for ip header
+#include <netinet/udp.h>//for udp header
+#include <netinet/tcp.h>//for tcp header
 
 
 #define PCKT_LEN 8192

@@ -7,9 +7,10 @@ namespace Deuterium{
 
 		using Deuterium::File::File;
 
+		//parsers are meant to read in files one character at a time, and 
+
 
 		struct ParserObject{
-			//objects have members
 		};
 
 		struct DictonaryObject{
