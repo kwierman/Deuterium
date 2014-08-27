@@ -55,8 +55,6 @@ namespace Deuterium{
 
 			std::vector<T> AsVector(){
 				//fDataAsVector.clear();
-
-
 				return fDataAsVector;
 			}
 		};
