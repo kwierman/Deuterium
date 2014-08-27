@@ -1,8 +1,6 @@
 #Get together the sources
-#file(GLOB module_sources *.cxx)
-#file(GLOB module_headers *.h)
-file(GLOB module_sources String*.cxx)
-file(GLOB module_headers String*.h)
+file(GLOB module_sources *.cxx)
+file(GLOB module_headers *.h)
 
 #Make the library
 add_library(DeuteriumDataFormat SHARED ${module_sources} ${module_headers})

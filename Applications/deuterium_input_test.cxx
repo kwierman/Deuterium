@@ -1,4 +1,7 @@
 
+#include <iostream>
+
+#include "Deuterium/DataFormat/BaseFormat.h"
 
 int main(int argc, char* argv[]){
 
@@ -8,6 +11,9 @@ int main(int argc, char* argv[]){
 		return -1;
 	}
 
+	Deuterium::DataFormat::DataStructure data;
+
+	/*
 	//Make sure the file exists
 	Deuterium::FileSystem::File input(argv[1]);
 	if(! input.IsValid() ){
@@ -30,4 +36,5 @@ int main(int argc, char* argv[]){
 		it = parser.GetNext();
 		PrintDataNode(it);
 	}
+	*/
 }

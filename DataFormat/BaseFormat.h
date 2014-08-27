@@ -1,33 +1,79 @@
 #ifndef Deuterium_BaseFormat_h_
 #define Deuterium_BaseFormat_h_
 
+#include <vector>
+#include <string>
+#include <map>
+#include <list>
+
 namespace Deuterium{
 	namespace DataFormat{
 
-		struct DataNode{
-			std::string name;
-			std::vector<DataNode> Children;
+
+		//! Placeholder node type definition so that each node
+		enum NodeType {
+			stringtype,
+			inttype,
+			array_type,
+			pair_type,
+			list_type,
+			dict_type
 		};
 
-		template<class TypeType>
-		struct DataNodeImpl : public DataNode {
-			TypeType data;
+		class DataNode;
+
+		//! DataIterator points to a parent that is iterable
+		class DataIterator{
+			//! Point to parent node to iterate over
+			DataNode* ptr;
+		public:
+			//! Copy from other iterator
+			DataIterator(DataNode& other) : ptr(other.ptr) {}
+			DataIterator(const DataIterator& other) : ptr(other.ptr) {}
+			DataIterator& operator=(const DataIterator& other){
+				this->ptr = other.ptr;
+			}
+			bool operator==(const DataIterator& other) const{
+				//switch on child type and check over 
+			}
+			DataIterator& operator++(){
+
+			}
+			DataIterator& operator--(){
+				
+			}
+			DataIterator& operator++(int index){
+
+			}
+			DataIterator& operator--(int index){
+				
+			}
+
+
 		};
 
-		typedef DataNodeImpl<std::string>  StringNode ;//to be described as "key" : "value"
-		typedef DataNodeImpl< std::map<std::string,DataNode> >  ArrayNode ;// to be described as
+		class DataNode{
+			NodeType fType;
+			std::string fString;
+			int fInt;
+			std::vector<DataNode> fArray;
+			std::list<DataNode> fList;
+			DataNode* fPair;
 
+		public:
+			DataNode(const std:string& data) : fType(stringtype), fString(data), fPair(NULL), fInt(0){}
+
+			NodeType GetNodeType(){return fType;}
+
+
+		};
 
 
 		class DataStructure{
 			DataNode rootNode;
-		};
-
-		class DataIterator{
-			DataNode* ptr;
-			void Insert();
-			void Remove();
-
+			DataIterator GetRootNodeIterator(){
+				return DataIterator(rootNode);
+			}
 		};
 
 	}
