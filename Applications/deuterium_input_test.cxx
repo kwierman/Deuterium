@@ -4,12 +4,17 @@
 
 #include "Deuterium/DataFormat/BaseFormat.h"
 #include "Deuterium/DataFormat/JSONFormat.h"
+#include "Deuterium/DataFormat/XMLFormat.h"
 
 using Deuterium::DataFormat::DataNode;
 using Deuterium::DataFormat::JSONFormat;
+using Deuterium::DataFormat::XMLFormat;
 
 DataNode MakeArray(const std::string& name){
 	DataNode namedArray(DataNode::pair_type);
+	namedArray.SetString(name);
+
+	namedArray.Append( DataNode(DataNode::array_type) );
 
 	return namedArray;
 }
@@ -49,6 +54,10 @@ int main(int argc, char* argv[]){
 
 	std::cout<<json.Write()<<std::endl;
 
+	XMLFormat xml;
+	xml.SetNode(data);
+
+	std::cout<<xml.Write()<<std::endl;
 
 	/*
 	//Make sure the file exists

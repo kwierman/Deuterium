@@ -6,24 +6,23 @@
 #include <map>
 #include <list>
 
-#include "Protium/Allocation/SmallObject.h"
+//#include "Protium/Allocation/SmallObject.h"
 
 namespace Deuterium{
 	namespace DataFormat{
 
-
-
-
 		class DataNode;
 
-		typedef std::vector< DataNode, Protium::Allocation::STLAdapter< DataNode > > DataVector;
+		//typedef std::vector< DataNode, Protium::Allocation::STLAdapter< DataNode > > DataVector;
+		typedef std::vector< DataNode > DataVector;
 
 		typedef DataVector::iterator DataIterator;
 
-		class DataNode : public ::Protium::Allocation::DefaultSmallObject {
+		class DataNode {//: public ::Protium::Allocation::DefaultSmallObject {
 		public:
 			//! Placeholder node type definition so that each node can be concisely selected
 			enum NodeType {
+				none_type,
 				string_type,
 				int_type,
 				array_type,

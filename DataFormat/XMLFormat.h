@@ -1,21 +1,22 @@
-#ifndef Deuterium_JSONFormat_h_
-#define Deuterium_JSONFormat_h_
-
-#include "Deuterium/DataFormat/VirtualFormat.h"
+#ifndef Deuterium_XMLFormat_h_
+#define Deuterium_XMLFormat_h_
 
 #include <string>
 #include <sstream>
 
+#include "Deuterium/DataFormat/VirtualFormat.h"
+
 namespace Deuterium{
 	namespace DataFormat{
 
+		class DataNode;
 
-		class JSONFormat : public VirtualFormat {
+		class XMLFormat : public VirtualFormat{
 		public:
 			void Read(const std::string& input);
 			std::string Write();
-			JSONFormat(){}
-			virtual ~JSONFormat(){}
+			XMLFormat(){}
+			~XMLFormat(){};
 
 		private:
 			void WriteNode(std::stringstream& output, const unsigned& index, DataNode& node);

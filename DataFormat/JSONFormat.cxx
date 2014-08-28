@@ -1,4 +1,6 @@
-#include "JSONFormat.h"
+#include "Deuterium/DataFormat/JSONFormat.h"
+//#include "Deuterium/DataFormat/BaseFormat.h"
+
 
 #include <sstream>
 
@@ -10,9 +12,9 @@ std::string Deuterium::DataFormat::JSONFormat::Write(){
 	std::stringstream output;
 	output<<"{"<<std::endl;
 	
-	unsigned nnodes = root.GetNNodes();
+	unsigned nnodes = root->GetNNodes();
 	unsigned index = 0;
-	for(DataIterator it = root.Begin(); it!=root.End(); ++it){
+	for(DataIterator it = root->Begin(); it!=root->End(); ++it){
 		WriteNode(output, 1, (*it));
 		if(++index<nnodes)
 			output<<","<<std::endl;
@@ -57,7 +59,7 @@ void Deuterium::DataFormat::JSONFormat::WriteIntNode(std::stringstream& output, 
 void Deuterium::DataFormat::JSONFormat::WriteArrayNode(std::stringstream& output, const unsigned& index, DataNode& node){
 	output<<"{"<<std::endl;
 	
-	for(DataIterator it = root.Begin(); it!=root.End(); ++it){
+	for(DataIterator it = node.Begin(); it!=node.End(); ++it){
 		WriteNode(output, index+1, (*it));
 		output<<","<<std::endl;
 	}
@@ -66,21 +68,21 @@ void Deuterium::DataFormat::JSONFormat::WriteArrayNode(std::stringstream& output
 void Deuterium::DataFormat::JSONFormat::WriteListNode(std::stringstream& output, const unsigned& index, DataNode& node){
 	output<<"["<<std::endl;
 	
-	for(DataIterator it = root.Begin(); it!=root.End(); ++it){
+	for(DataIterator it = node.Begin(); it!=node.End(); ++it){
 		WriteNode(output, index+1, (*it));
 		output<<","<<std::endl;
 	}
 	output<<"]"<<std::endl;
 }
 void Deuterium::DataFormat::JSONFormat::WritePairNode(std::stringstream& output, const unsigned& index, DataNode& node){
-	WriteNode(output, index, node);
+	WriteStringNode(output, index, node);
 	output<<" : ";
 	WriteNode(output, index,  *(node.Begin()) );
 }
 void Deuterium::DataFormat::JSONFormat::WriteDictNode(std::stringstream& output, const unsigned& index, DataNode& node){
 	output<<"{"<<std::endl;
 	
-	for(DataIterator it = root.Begin(); it!=root.End(); ++it){
+	for(DataIterator it = node.Begin(); it!=node.End(); ++it){
 		WriteNode(output, index+1, (*it));
 		output<<","<<std::endl;
 	}
