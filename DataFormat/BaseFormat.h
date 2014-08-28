@@ -12,15 +12,7 @@ namespace Deuterium{
 	namespace DataFormat{
 
 
-		//! Placeholder node type definition so that each node can be concisely selected
-		enum NodeType {
-			string_type,
-			int_type,
-			array_type,
-			pair_type,
-			list_type,
-			dict_type
-		};
+
 
 		class DataNode;
 
@@ -29,6 +21,18 @@ namespace Deuterium{
 		typedef DataVector::iterator DataIterator;
 
 		class DataNode : public ::Protium::Allocation::DefaultSmallObject {
+		public:
+			//! Placeholder node type definition so that each node can be concisely selected
+			enum NodeType {
+				string_type,
+				int_type,
+				array_type,
+				pair_type,
+				list_type,
+				dict_type
+			};
+		private:
+
 			NodeType fType;
 			std::string fString;
 			int fInt;
@@ -54,6 +58,9 @@ namespace Deuterium{
 
 			void SetInt(const int& x){fInt=x;}
 			void SetString(const std::string& x){fString=x;}
+			int GetInt(){return fInt;}
+			std::string GetString(){return fString;}
+
 			void Prepend( const DataNode& node){
 				fArray.insert( fArray.begin(), node);
 			}
@@ -77,6 +84,9 @@ namespace Deuterium{
 
 			DataIterator End(){
 				return fArray.end();
+			}
+			size_t GetNNodes(){
+				return fArray.size();
 			}
 
 			NodeType GetNodeType(){return fType;}

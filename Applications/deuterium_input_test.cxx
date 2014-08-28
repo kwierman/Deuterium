@@ -1,7 +1,19 @@
 
 #include <iostream>
+#include <string>
 
 #include "Deuterium/DataFormat/BaseFormat.h"
+#include "Deuterium/DataFormat/JSONFormat.h"
+
+using Deuterium::DataFormat::DataNode;
+using Deuterium::DataFormat::JSONFormat;
+
+DataNode MakeArray(const std::string& name){
+	DataNode namedArray(DataNode::pair_type);
+
+	return namedArray;
+}
+
 
 int main(int argc, char* argv[]){
 
@@ -11,10 +23,31 @@ int main(int argc, char* argv[]){
 		return -1;
 	}
 
-	Deuterium::DataFormat::DataNode data();
+	DataNode data;
+
+	for(int i=0; i<4;i++){
+		DataNode stringNode(DataNode::string_type);
+		stringNode.SetString("This is a node");
+
+		data.Append(stringNode);
+	}
+	for(int i=0; i<4;i++){
+		DataNode intNode(DataNode::int_type);
+		intNode.SetInt(i);
+
+		data.Append(intNode);
+	}
+	for(int i=0; i<4;i++){
+		data.Append( MakeArray("This is an array") );
+	}
 
 
 	std::cout<<sizeof(Deuterium::DataFormat::DataNode)<<std::endl;
+
+	JSONFormat json;
+	json.SetNode(data);
+
+	std::cout<<json.Write()<<std::endl;
 
 
 	/*

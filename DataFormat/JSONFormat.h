@@ -15,15 +15,16 @@ namespace Deuterium{
 		public:
 			void Read(const std::string& input);
 			std::string Write();
+			void SetNode(DataNode& node){root=node;}
 
 		private:
-			void WriteNode(const unsigned& index, DataNode& node);
-			void WriteStringNode(std::stringstream& output, DataNode& node);
-			void WriteIntNode(std::stringstream& output, DataNode& node);
-			void WriteArrayNode(std::stringstream& output, DataNode& node);
-			void WriteListNode(std::stringstream& output, DataNode& node);
-			void WritePairNode(std::stringstream& output, DataNode& node);
-			void WriteDictNode(std::stringstream& output, DataNode& node);
+			void WriteNode(std::stringstream& output, const unsigned& index, DataNode& node);
+			void WriteStringNode(std::stringstream& output, const unsigned& index, DataNode& node);
+			void WriteIntNode(std::stringstream& output, const unsigned& index, DataNode& node);
+			void WriteArrayNode(std::stringstream& output, const unsigned& index, DataNode& node);
+			void WriteListNode(std::stringstream& output, const unsigned& index, DataNode& node);
+			void WritePairNode(std::stringstream& output, const unsigned& index, DataNode& node);
+			void WriteDictNode(std::stringstream& output, const unsigned& index, DataNode& node);
 
 		};
 
