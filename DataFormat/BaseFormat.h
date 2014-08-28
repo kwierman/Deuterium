@@ -6,14 +6,16 @@
 #include <map>
 #include <list>
 
+#include "Protium/Allocation/SmallObject.h"
+
 namespace Deuterium{
 	namespace DataFormat{
 
 
-		//! Placeholder node type definition so that each node
+		//! Placeholder node type definition so that each node can be concisely selected
 		enum NodeType {
-			stringtype,
-			inttype,
+			string_type,
+			int_type,
 			array_type,
 			pair_type,
 			list_type,
@@ -22,60 +24,64 @@ namespace Deuterium{
 
 		class DataNode;
 
-		//! DataIterator points to a parent that is iterable
-		class DataIterator{
-			//! Point to parent node to iterate over
-			DataNode* ptr;
-		public:
-			//! Copy from other iterator
-			DataIterator(DataNode& other) : ptr(other.ptr) {}
-			DataIterator(const DataIterator& other) : ptr(other.ptr) {}
-			DataIterator& operator=(const DataIterator& other){
-				this->ptr = other.ptr;
-			}
-			bool operator==(const DataIterator& other) const{
-				//switch on child type and check over 
-			}
-			DataIterator& operator++(){
+		typedef std::vector< DataNode, Protium::Allocation::STLAdapter< DataNode > > DataVector;
 
-			}
-			DataIterator& operator--(){
-				
-			}
-			DataIterator& operator++(int index){
+		typedef DataVector::iterator DataIterator;
 
-			}
-			DataIterator& operator--(int index){
-				
-			}
-
-
-		};
-
-		class DataNode{
+		class DataNode : public ::Protium::Allocation::DefaultSmallObject {
 			NodeType fType;
 			std::string fString;
 			int fInt;
-			std::vector<DataNode> fArray;
-			std::list<DataNode> fList;
-			DataNode* fPair;
+			DataVector fArray;
 
 		public:
-			DataNode(const std:string& data) : fType(stringtype), fString(data), fPair(NULL), fInt(0){}
+			DataNode(const NodeType& type=list_type) : fType(type){}
+
+			DataNode(const DataNode& other){
+				fType = other.fType;
+				fString = other.fString;
+				fInt = other.fInt;
+				fArray = other.fArray;
+			}
+
+			DataNode& operator=(const DataNode& other){
+				fType = other.fType;
+				fString = other.fString;
+				fInt = other.fInt;
+				fArray = other.fArray;
+				return *this;
+			}
+
+			void SetInt(const int& x){fInt=x;}
+			void SetString(const std::string& x){fString=x;}
+			void Prepend( const DataNode& node){
+				fArray.insert( fArray.begin(), node);
+			}
+
+			void Append(const DataNode& node){
+				fArray.push_back(node);
+			}
+
+			void InsertBefore(const DataNode& node, const DataIterator& it){
+				fArray.insert(it, node);
+			}
+
+			void InsertAfter(const DataNode& node, const DataIterator& it){
+				DataIterator temp = it;
+				fArray.insert(++temp, node);
+			}
+
+			DataIterator Begin(){
+				return fArray.begin();
+			}
+
+			DataIterator End(){
+				return fArray.end();
+			}
 
 			NodeType GetNodeType(){return fType;}
 
-
 		};
-
-
-		class DataStructure{
-			DataNode rootNode;
-			DataIterator GetRootNodeIterator(){
-				return DataIterator(rootNode);
-			}
-		};
-
 	}
 }
 #endif //File Guardian

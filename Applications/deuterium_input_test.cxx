@@ -11,7 +11,11 @@ int main(int argc, char* argv[]){
 		return -1;
 	}
 
-	Deuterium::DataFormat::DataStructure data;
+	Deuterium::DataFormat::DataNode data();
+
+
+	std::cout<<sizeof(Deuterium::DataFormat::DataNode)<<std::endl;
+
 
 	/*
 	//Make sure the file exists

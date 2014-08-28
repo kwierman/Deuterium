@@ -16,7 +16,7 @@ set(INSTALL_CMAKE_DIR ${DEF_INSTALL_CMAKE_DIR} CACHE PATH "Installation director
 find_package(Protium REQUIRED)
 if (PROTIUM_FOUND)
   include_directories(${PROTIUM_INCLUDE_DIRS})
-  target_link_libraries (helloworld ${PROTIUM_LIBRARIES})
+  #target_link_libraries (helloworld ${PROTIUM_LIBRARIES})
 endif (PROTIUM_FOUND)
 #----------------------------------------------------------------------------
 if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
