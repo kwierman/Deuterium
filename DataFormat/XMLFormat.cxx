@@ -52,56 +52,45 @@ void Deuterium::DataFormat::XMLFormat::WriteNode( std::stringstream& output, con
 	};
 }
 void Deuterium::DataFormat::XMLFormat::WriteStringNode(std::stringstream& output, const unsigned& index, DataNode& node){
-	output<<"\""<<node.GetString()<<"\"";
+	output<<"\""<<node.GetString()<<"\""<<std::endl;
 }
 void Deuterium::DataFormat::XMLFormat::WriteIntNode(std::stringstream& output, const unsigned& index, DataNode& node){
-	output<<node.GetInt();
+	output<<node.GetInt()<<std::endl;
 }
 void Deuterium::DataFormat::XMLFormat::WriteArrayNode(std::stringstream& output, const unsigned& index, DataNode& node){
-	output<<"["<<std::endl;
-	
 	for(DataIterator it = node.Begin(); it!=node.End(); ++it){
 		WriteNode(output, index+1, (*it));
-		output<<","<<std::endl;
 	}
-	output<<"]"<<std::endl;
 }
 void Deuterium::DataFormat::XMLFormat::WriteListNode(std::stringstream& output, const unsigned& index, DataNode& node){
-	output<<"["<<std::endl;
-	
 	for(DataIterator it = node.Begin(); it!=node.End(); ++it){
 		WriteNode(output, index+1, (*it));
-		output<<","<<std::endl;
 	}
-	output<<"]"<<std::endl;
 }
 void Deuterium::DataFormat::XMLFormat::WritePairNode(std::stringstream& output, const unsigned& index, DataNode& node){
 	//check to see what's inside, then see what gets printed
 	output<<"<";
 	WriteStringNode( output, 0, node);
 	//check to see the type of the companion object
-	switch( *(node.Begin()).GetNodeType() ){
+
+
+	switch( node.Begin()->GetNodeType() ){
+		//if the interior is a dictionary, treat it like attributes
 		case DataNode::dict_type:
 			output<<" ";
 			WriteDictNode(output, 0, *(node.Begin()) );
-
-		case DataNode::none_type:
-
-		case DataNode::list_type:
+			output<<"/>"<<std::endl;
+			break;
 		default:
-
+			WriteNode(output, index+1, *(node.Begin()) );
+			output<<"</";
+			WriteStringNode(output, 0, node);
+			output<<">"<<std::endl;
 	};
 
-	WriteStringNode(output, index, node);
-	output<<" : ";
-	WriteNode(output, index,  *(node.Begin()) );
 }
 void Deuterium::DataFormat::XMLFormat::WriteDictNode(std::stringstream& output, const unsigned& index, DataNode& node){
-	output<<"{"<<std::endl;
-	
 	for(DataIterator it = node.Begin(); it!=node.End(); ++it){
-		WriteNode(output, index+1, (*it));
-		output<<","<<std::endl;
+		output<<it->GetString()<<"=\""<<it->Begin()->GetString()<<"\"";
 	}
-	output<<"}"<<std::endl;
 }
