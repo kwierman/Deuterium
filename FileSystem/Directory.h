@@ -85,6 +85,7 @@ namespace Deuterium {
 
 			//! Get back the absolute path
 			std::string GetAbsolutePath(){
+				//given the path, try and find it, and get back the absolute path
 			}
 		};
 	}
