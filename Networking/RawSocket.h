@@ -182,7 +182,7 @@ Type 253 — RFC3692-style Experiment 1
 
 			void GetNext(){
 				//his should be implemented to
-				std::cout<<"Socket Descrp: "<<fSockDesc<<std::endl;
+				std::cout<<"Socket Desc: "<<fSockDesc<<std::endl;
 		        sockaddr_in addr;
 		        unsigned int addr_len = sizeof(addr);
 		        if (getsockname(fSockDesc, (sockaddr *) &addr, (socklen_t *) &addr_len) < 0)

@@ -18,8 +18,18 @@ namespace Deuterium{
 		 * ~~~~~~~~
 		 * 
 		 * ~~~~~~~~
+		 * HOW TO SET File Lifetime
+		 * ~~~~~~~~
+		 * 
+		 * ~~~~~~~~		 
 		 */
 	}
+
+
+	class Logger{
+
+		std::vector<>
+	};
 }
 
 

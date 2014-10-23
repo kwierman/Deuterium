@@ -14,7 +14,7 @@
 #include <stdlib.h>
 
 
-//Degub crap
+//TODO: Remove for debugging
 #include <iostream>
 
 
@@ -35,7 +35,7 @@ namespace Deuterium{
       enum{type=SOCK_DGRAM, protocol=IPPROTO_UDP};
     };
 
-    //! Prototype class for all socket types
+    //! Prototype class for all socket types. Defaults to a TCP socket due to ease of TCP.
     template<class SocketType=TCPSocket>
     class SocketPrototype : public SocketType {
     public:
@@ -50,12 +50,9 @@ namespace Deuterium{
 
       //!Default constructor uses template to create socket type,protocol
       SocketPrototype() throw(NetworkingException) : fSockDesc(-1) {
-        std::cout<<"In Socket Prototype "<<std::endl;
         fIsPortValid=false;
         fSockDesc =socket(PF_INET, SocketType::type, SocketType::protocol);
-        std::cout<<fSockDesc<<std::endl;
         fIsPortValid = (fSockDesc>=0);
-        //if(! fIsPortValid) return;
         SocketPrototype::GetLocalInformation();
       }
       SocketPrototype(const int& socketDesc){
@@ -78,7 +75,6 @@ namespace Deuterium{
           throw NetworkingException("Fetch of local information failed (getsockname())", true);
         fLocalAddress=inet_ntoa(addr.sin_addr);
         fLocalPort=ntohs(addr.sin_port);
-        std::cout<<"Local Information: "<<fLocalAddress<<" : "<<fLocalPort<<std::endl;
       }
       //! Gets local Address
       std::string GetLocalAddress(){return fLocalAddress;}
