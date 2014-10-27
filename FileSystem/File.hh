@@ -1,5 +1,5 @@
-#ifndef Deuterium_File_h_
-#define Deuterium_File_h_
+#ifndef Deuterium_File_hh_
+#define Deuterium_File_hh_
 
 #include <fstream>
 #include <string>
@@ -45,13 +45,6 @@ namespace Deuterium{
 
 			std::string GetName()const {return fName;}
 		};
-
-
-
-		//template< template<class, class> class ThreadingPolicy = Protium::Threads::InstanceLocked>
-		//class File
-
-
 	}
 }
 

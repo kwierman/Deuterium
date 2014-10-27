@@ -3,9 +3,9 @@
 
 int main(int argc, char* argv[]){
 
-	Deuterium::Arguments:ArguementList list(argc, argv);
+	//Deuterium::Arguments:ArguementList list(argc, argv);
 
-	Protium::Threads::Daemon<Deuterium::DataFormat::ORCAFileWriter> deamon();
+	//Protium::Threads::Daemon<Deuterium::DataFormat::ORCAFileWriter> deamon();
 
-	deamon.start();
+	//deamon.start();
 }

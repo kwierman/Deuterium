@@ -1,4 +1,4 @@
-file(GLOB applications *.cxx)
+file(GLOB applications *.cc)
 foreach(_app ${applications})
 	get_filename_component (name_without_extension ${_app} NAME_WE)
 	add_executable(${name_without_extension} ${_app} )

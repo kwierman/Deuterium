@@ -1,4 +1,4 @@
 Deuterium
 -----------------------
 
-File system and scripting support for Tritium Libraries
+File system, networking  and scripting support for Tritium Libraries

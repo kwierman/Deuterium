@@ -1,8 +1,8 @@
-#ifndef Deuterium_FileSystem_h_
-#define Deuterium_FileSystem_h_
+#ifndef Deuterium_FileSystem_hh_
+#define Deuterium_FileSystem_hh_
 
-#include "Deuterium/FileSystem/Directory.h"
-#include "Deuterium/FileSystem/File.h"
+#include "Deuterium/FileSystem/Directory.hh"
+#include "Deuterium/FileSystem/File.hh"
 //#include "Deuterium/FileSystem/FileUtilities.h"
 
 namespace Deuterium{

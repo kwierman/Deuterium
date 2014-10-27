@@ -1,6 +1,6 @@
 #Get together the sources
-file(GLOB module_sources *.cxx)
-file(GLOB module_headers *.h)
+file(GLOB module_sources *.cc)
+file(GLOB module_headers *.hh)
 
 #Make the library
 add_library(DeuteriumFileSystem SHARED ${module_sources} ${module_headers})

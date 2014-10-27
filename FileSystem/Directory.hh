@@ -1,13 +1,11 @@
 #ifndef Deuterium_Directory_h_
 #define Deuterium_Directory_h_
 
-#include <dirent.h>
+
 #include <string>
 #include <vector>
 
-#include "Deuterium/FileSystem/File.h"
-#include "Protium/Threads/ThreadingPolicy.h"
-#include "Protium/Threads/Mutex.h"
+#include "Deuterium/FileSystem/File.hh"
 
 
 namespace Deuterium {
@@ -20,9 +18,6 @@ namespace Deuterium {
 
 			//! Data for holding directory information
 			DIR* fDir;
-
-			//! Data for holding directory content information
-			struct dirent *fDirectoryEntry;
 
 			//! Invalidates directory if non existent
 			bool fIsValid;
@@ -38,16 +33,16 @@ namespace Deuterium {
 
 		public:
 			//! Default directory constructor
-			Directory() : fDir(NULL), fDirectoryEntry(NULL), fIsValid(false) {}
+			Directory() : fDir(NULL), fIsValid(false) {}
 
 			//! Construct directory with name
-			Directory(const std::string& dirName ) : fDir(NULL), fDirectoryEntry(NULL), fIsValid(false) {
+			Directory(const std::string& dirName ) : fDir(NULL), fIsValid(false) {
 				fDir = opendir(dirName.c_str() );
 				fIsValid = (fDir);
 				fDirName = dirName;
 			}
 
-			Directory(const Directory& other): fDir(NULL), fDirectoryEntry(NULL), fIsValid(false){
+			Directory(const Directory& other): fDir(NULL), fIsValid(false){
 				fDirName = other.GetName();
 				fDir = opendir( fDirName.c_str() );
 				fIsValid = (fDir);
@@ -65,8 +60,9 @@ namespace Deuterium {
 			inline bool IsValid(){return fIsValid;}
 
 		    bool Read(){
-		    	while(fDirectoryEntry = readdir(fDir) ){
-					std::string item = fDirectoryEntry->d_name;
+				struct dirent *directoryEntry;
+		    	while(directoryEntry = readdir(fDir) ){
+					std::string item = directoryEntry->d_name;
 
 					//see if this is a directory
 					Directory temp(item);
