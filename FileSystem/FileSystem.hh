@@ -8,7 +8,18 @@
 namespace Deuterium{
 
 	//! Includes file and directory 
-	namespace FileSystem{}
+	namespace FileSystem{
+		/*!
+			The FileSystem is meant to be used in the following ways
+
+			//If you want to get the current directory, do something like this:
+			Directory thisDir('.');
+			std::cout<<thisDir.getAbsolutePath()<<std::endl;
+			///get the contents of this directory
+
+
+		 */
+	}
 }
 
 #endif //File Guardian

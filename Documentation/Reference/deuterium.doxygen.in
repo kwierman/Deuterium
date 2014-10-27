@@ -629,7 +629,7 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories
 # with spaces.
 
-INPUT                  = @PROJECT_SOURCE_DIR@/Include @PROJECT_SOURCE_DIR@/LinearAlgebra @PROJECT_SOURCE_DIR@/Threads @PROJECT_SOURCE_DIR@/Applications @PROJECT_SOURCE_DIR@/Allocation @PROJECT_SOURCE_DIR@/Design @PROJECT_SOURCE_DIR@/Singleton @PROJECT_SOURCE_DIR@/Utilities 
+INPUT                  = @PROJECT_SOURCE_DIR@/Include @PROJECT_SOURCE_DIR@/DataFormat @PROJECT_SOURCE_DIR@/FileSystem @PROJECT_SOURCE_DIR@/Include @PROJECT_SOURCE_DIR@/Logging @PROJECT_SOURCE_DIR@/Networking @PROJECT_SOURCE_DIR@/Python
 						 
 
 

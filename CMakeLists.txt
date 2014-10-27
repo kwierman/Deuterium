@@ -45,7 +45,7 @@ include_directories(${PROJECT_SOURCE_DIR}/..)
 add_subdirectory(FileSystem)
 #add_subdirectory(DataFormat)
 #add_subdirectory(Networking)
-#add_subdirectory(Applications)
+add_subdirectory(Applications)
 #----------------------------------------------------------------------------
 #Add in Documentation
 add_subdirectory(Documentation)

@@ -1,8 +1,8 @@
 
-#include "Deuterium/FileSystem/Directory.h"
-#include "Deuterium/FileSystem/File.h"
+#include "Deuterium/FileSystem/Directory.hh"
+#include "Deuterium/FileSystem/File.hh"
 
-#include "Protium/Utilities/SignalCatching.h"
+//#include "Protium/Utilities/SignalCatching.h"
 
 #include <iostream>
 
@@ -54,7 +54,7 @@ void PrintDirectory( Deuterium::FileSystem::Directory& dir, const int& indent){
 
 
 int main(int argc, char* argv[]){
-	Protium::Utilities::SignalCatcher::Instance().Setup();
+	//Protium::Utilities::SignalCatcher::Instance().Setup();
 	//Test file utilities
 	{
 		Deuterium::FileSystem::Directory currDir(".");
