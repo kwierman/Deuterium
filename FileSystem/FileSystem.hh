@@ -3,7 +3,7 @@
 
 #include "Deuterium/FileSystem/Directory.hh"
 #include "Deuterium/FileSystem/File.hh"
-//#include "Deuterium/FileSystem/FileUtilities.h"
+#include "Deuterium/FileSystem/FileUtilities.hh"
 
 namespace Deuterium{
 
