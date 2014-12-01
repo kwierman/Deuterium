@@ -21,7 +21,7 @@
 namespace Deuterium{
   namespace Networking{
 
-    //!Null Socket Type, Needs to have enum type and protocol
+    //!Null Socket Typez
     struct InValidSocket{};
 
     struct RawSocket{

@@ -1,4 +1,4 @@
-#include "Deuterium/Networking/NetworkingException.h"
+#include "Deuterium/Networking/NetworkingException.hh"
 
 #include <errno.h>           // For errno
 #include <string.h>

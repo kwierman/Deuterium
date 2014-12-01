@@ -17,8 +17,6 @@ namespace Deuterium{
 		class OptionList{
 			//! Minimum number of arguments required for program to function
 			unsigned fMinArgument;
-			int fArgc;
-			char* fArgv;
 
 		public:
 			//! Construct the argument list from the program arguments

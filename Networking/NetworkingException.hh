@@ -1,5 +1,5 @@
-#ifndef Deuterium_NetworkingException_h_
-#define Deuterium_NetworkingException_h_
+#ifndef Deuterium_NetworkingException_hh_
+#define Deuterium_NetworkingException_hh_
 
 #include <exception>
 #include <string>            // For string

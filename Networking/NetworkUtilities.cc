@@ -1,7 +1,5 @@
-#ifndef Deuterium_NetworkUtilities_h_
-#define Deuterium_NetworkUtilities_h_
-
-#include "Deuterium/Networking/NetworkingException.h"
+#include "Deuterium/Networking/NetworkUtilities.hh"
+#include "Deuterium/Networking/NetworkingException.hh"
 
 #include <string>
 
@@ -10,10 +8,7 @@
 #include <string>
 #include <string.h>
 
-
-namespace Deuterium{
-	namespace Networking{
-		static void fillAddr(const std::string &address, unsigned short port, sockaddr_in &addr){
+static void Deuterium::Networking::fillAddr(const std::string &address, unsigned short port, sockaddr_in &addr){
   memset(&addr, 0, sizeof(addr) );  // Zero out address structure
   addr.sin_family = AF_INET;       // Internet address
 
@@ -30,24 +25,12 @@ namespace Deuterium{
   addr.sin_port = htons(port);     // Assign port in network byte order
 }
 
-
-    static  unsigned short csum(unsigned short *buf, int len){
-
-        unsigned long sum;
-
-        for(sum=0; len>0; len--)
-
-                sum += *buf++;
-
-        sum = (sum >> 16) + (sum &0xffff);
-
-        sum += (sum >> 16);
-
-        return (unsigned short)(~sum);
-    }
-  }
+//! XOR Czech-Sum
+static  unsigned short Deuterium::Networking::csum(unsigned short *buf, int len){
+    unsigned long sum;
+    for(sum=0; len>0; len--)
+            sum += *buf++;
+    sum = (sum >> 16) + (sum &0xffff);
+    sum += (sum >> 16);
+    return (unsigned short)(~sum);
 }
-
-
-
-#endif //File Guardian
