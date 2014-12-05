@@ -1,4 +1,4 @@
-#include "Deuterium/Networking/Socket.h"
+#include "Deuterium/Networking/Socket.hh"
 
 #include <sys/types.h>       // For data types
 #include <sys/socket.h>      // For socket(), connect(), send(), and recv()

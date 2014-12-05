@@ -1,7 +1,7 @@
 #ifndef Deuterium_Socket_h_
 #define Deuterium_Socket_h_
-#include "Deuterium/Networking/NetworkingException.h"
-#include "Deuterium/Networking/NetworkUtilities.h"
+#include "Deuterium/Networking/NetworkingException.hh"
+#include "Deuterium/Networking/NetworkUtilities.hh"
 
 
 #include <sys/types.h>       // For data types
