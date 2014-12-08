@@ -12,6 +12,7 @@
 #include <netinet/in.h>      // For sockaddr_in
 #include <errno.h>           // For errno
 #include <stdlib.h>
+#include <string.h>
 
 
 //TODO: Remove for debugging
