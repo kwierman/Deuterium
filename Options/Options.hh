@@ -35,6 +35,26 @@ namespace Deuterium{
 
 			Option(std::string lopt, std::string def, std::string set, std::string help, int n, bool req) :
 			long_opt(lopt), default_value(def), set_value(set), help_statement(help), n_args(n), required(req), was_set(false) {}
+			Option(const Option& other){
+				long_opt = other.long_opt;
+				was_set = other.was_set;
+				default_value = other.default_value;
+				set_value = other.set_value;
+				help_statement = other.help_statement;
+				n_args = other.n_args;
+				required = other.required;
+			}
+			Option& operator=(const Option& other){
+				long_opt = other.long_opt;
+				was_set = other.was_set;
+				default_value = other.default_value;
+				set_value = other.set_value;
+				help_statement = other.help_statement;
+				n_args = other.n_args;
+				required = other.required;
+				return *this;				
+			}
+
 		};
 
 		class OptionList{
@@ -68,96 +88,25 @@ namespace Deuterium{
 				const std::string& help_statement);
 
 			//! Parse the program input for options
-			void parse(){
-				//	The new version
-				for(str_vec_it it = raw.begin(); it!= raw.end(); ++it){
-					if( isOption( *it ) )
-						ParseOption( it);
-					else
-						additional_arguments.push_back( (*it));
-				}
-				//check the list to see if anything is required, but now met
-				for(map_it it = options.begin(); it!= options.end(); it++){
-					if( it->second.required && !(it->second.was_set)){
-						std::cout<<"Error Option required: "<<it->first<<std::endl;
-						exit(-1);
-					}
-				}
+			void parse();
 
-			}
+			void printUsage();
+			Option getOption(const char& short_opt);
 
-			void printUsage(){
-				/*
-				std::cout<<"Usage: "<<this->program_name<<" [[<-short_option <option_value> >] [<--long_option <option_value> >] [remaining parameters]]"<<std::endl;
-				std::cout<<"Options:"<<std::endl;
-				std::cout<<"Short Option\tLong Option\t Default Value\t Required"<<std::endl;
-				for(map_it it = options.begin(); it!= options.end(); ++it){
-					std::cout<<it->first<<"\t"<<
-					it->second.long_opt<<"\t"<<
-					it->second.set_value<<"\t"<<
-					(!it->second.required_met) <<"\t"<<std::endl;
-				}
-				*/
-			}
+
+			unsigned getNAdditionalArguements();
+			std::string getAdditionalArguement(const unsigned& i);
+
+
 		private://Helper Functions
 			//! Checks to see if this is an option
-			bool isOption(const std::string& input){
-				if(input.size()>1)
-					return input[0]=='-';
-				return false;
-			}
+			bool isOption(const std::string& input);
 			//! Checks to see if this is a long option
-			bool isLongOption(const std::string& input){
-				if(input.size()>2)
-					return isOption(input) && input[1]=='-';
-				return false;
-			}
+			bool isLongOption(const std::string& input);
 			//! Looks to see if this is an option
-			void ParseOption(str_vec_it& it){
-				//branch on long option or short option.
-				if(isLongOption(*it ) ){
-					std::string long_opt = (*it).substr(2);
-					for(map_it mit = options.begin(); mit!= options.end() ; ++mit){
-						if( mit->second.long_opt == long_opt ){
-							mit->second.was_set = true;
-							ConsumeArguements(mit, it);
-							return;
-						}
-					}
-					std::cout<<"Warning: Unknown long option found: "<<long_opt<<std::endl;
-					printUsage();
-				}
-				else{
-					std::string short_opt = (*it).substr(1);
-					for(int i=0; i< short_opt.size(); i++){
-						map_it mit = options.find( short_opt[i] );
-						if(mit == options.end() ){
-							std::cout<<"Warning: Unkown short option: "<<short_opt[i];
-							continue;
-						}
-						if(mit->first == 'h'){
-							printUsage();
-							exit(0);
-						}
-						mit->second.was_set= true;
-						if(i==short_opt.size()-1)
-							ConsumeArguements(mit, it);
-					}
-				}
+			void ParseOption(str_vec_it& it);
 
-			}
-
-			void ConsumeArguements(map_it& mit, str_vec_it& sit){
-				for(int n_args_consumed=0;n_args_consumed < mit->second.n_args; ++n_args_consumed ){
-					//consume the argument
-					str_vec_it tit = sit;
-					tit++;
-					if(mit->second.set_value.size()>0)
-						mit->second.set_value.append(" ");
-					mit->second.set_value.append(*tit);
-					this->raw.erase(tit);
-				}
-			}
+			void ConsumeArguements(map_it& mit, str_vec_it& sit);
 
 
 		};
