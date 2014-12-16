@@ -41,7 +41,9 @@ endif()
 #----------------------------------------------------------------------------
 # Locate sources and headers for this project
 include_directories(${PROJECT_SOURCE_DIR}/..)
+add_subdirectory(Options)
 add_subdirectory(FileSystem)
+
 #add_subdirectory(DataFormat)
 add_subdirectory(Networking)
 add_subdirectory(Applications)

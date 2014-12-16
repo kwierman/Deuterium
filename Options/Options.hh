@@ -5,6 +5,7 @@
 #include <vector>
 #include <map>
 #include <iostream>
+#include <cstdlib>
 
 namespace Deuterium{
 	namespace Options{
@@ -23,112 +24,140 @@ namespace Deuterium{
 
 		//!TODO: move this to the interior of the option list.
 		struct Option{
+			//char short_opt; (already included in map)
 			std::string long_opt;
-			std::string value;
-			bool required_met;
+			bool was_set;
+			std::string default_value;
+			std::string set_value;
+			std::string help_statement;
+			int n_args;
+			bool required;
+
+			Option(std::string lopt, std::string def, std::string set, std::string help, int n, bool req) :
+			long_opt(lopt), default_value(def), set_value(set), help_statement(help), n_args(n), required(req), was_set(false) {}
 		};
 
 		class OptionList{
+
 			//! holds the raw data
 			std::vector<std::string> raw;
 			typedef std::vector<std::string>::iterator str_vec_it;
+			
 			//! holds the options
 			std::map<char, Option> options;
 			typedef std::map<char, Option>::iterator map_it;
 
-			//! holds the program name
+			//! The program name (for printing help statement)
 			std::string program_name;
+			//! Additional Arguements handed to the program
 			std::vector<std::string> additional_arguments;
 
 		public:
 			//! Construct the argument list from the program arguments
-			OptionList(int argc, char* argv[]){
-				program_name = argv[0];
-				for(int i=1; i<argc; i++){
-					raw.push_back(argv[i]);
-				}
-				if(argc!= raw.size()+1){
-					std::cout<<"WARNING: Arguments do not match raw data"<<std::endl;
-					std::cout<<"\targc: "<<argc<<std::endl;
-					std::cout<<"\traw: "<<raw.size()<<std::endl;
-				}
-			}
+			OptionList(int argc, char* argv[]);
 
-			void setOption(const char& short_opt, 
-				const std::string& long_opt, 
-				const std::string& default_value="\t", 
-				const bool& required=false){
-				Option opt;
-				opt.long_opt = long_opt;
-				opt.value = default_value;
-				opt.required_met = !required;
+			//! Set an option to be parsed
+			//! \param short_opt ShortOptionValue a character representing a short option. i.e, 'v' for -v
+			//! \param long_opt LongOptionValue a string representing a long option. i.e. "verbose" for --verbose
+			//! \param n_args NumberofArguments Integer number of arguments to hand to option
+			void setOption(const char& short_opt,
+				const std::string& long_opt,
+				const unsigned& n_args,
+				const bool& required,
+				const std::string& default_value,
+				const std::string& help_statement);
 
-				options.insert(std::make_pair(short_opt, opt) );
-			}
-
+			//! Parse the program input for options
 			void parse(){
-
-				map_it indicator = options.end();
-
+				//	The new version
 				for(str_vec_it it = raw.begin(); it!= raw.end(); ++it){
-					if( (*it)[0]=='-' ){//Begins with option delimiter
-						if( (*it).size()>1 ){//Safety check
-							if( (*it)[1]=='-' ){//Begins with long option delimiter
-								//Set the iterator
-								std::string long_opt = (*it).substr(2);
-								indicator = options.end();
-								for(map_it it2 = options.begin(); it2!= options.end() ; ++it2){
-									if( it2->second.long_opt == long_opt ){
-										indicator = it2;
-										it2->second.required_met = true;
-										}
-								}
-								if(indicator == options.end()){
-									std::cout<<"Error: Unknown long option found: "<<long_opt<<std::endl;
-									printUsage();
-								}
-							}
-							else{//Does not begin with long option delimiter
-								//set the iterator
-								char short_opt = (*it).substr(1)[0];
-								indicator = options.find(short_opt);
-								if(indicator == options.end()){
-									std::cout<<"Error: Unknown short option found: "<<short_opt<<std::endl;
-									printUsage();
-								}	
-								else{
-									indicator->second.required_met = true;
-								}
-							}
-						}
-					}
-					else{//does not begin with option delimiter
-						indicator->second.value = (*it);
-						indicator = options.end();
+					if( isOption( *it ) )
+						ParseOption( it);
+					else
+						additional_arguments.push_back( (*it));
+				}
+				//check the list to see if anything is required, but now met
+				for(map_it it = options.begin(); it!= options.end(); it++){
+					if( it->second.required && !(it->second.was_set)){
+						std::cout<<"Error Option required: "<<it->first<<std::endl;
+						exit(-1);
 					}
 				}
 
-				//check the options to make sure they're in line
-				for(map_it it  = options.begin(); it!= options.end(); ++it){
-					if( !it->second.required_met ){
-						std::cout<<"ERROR: Required option: "<<it->second.long_opt<<" Not Set"<<std::endl;
-						printUsage();
-					}
-				}
 			}
 
 			void printUsage(){
+				/*
 				std::cout<<"Usage: "<<this->program_name<<" [[<-short_option <option_value> >] [<--long_option <option_value> >] [remaining parameters]]"<<std::endl;
 				std::cout<<"Options:"<<std::endl;
 				std::cout<<"Short Option\tLong Option\t Default Value\t Required"<<std::endl;
 				for(map_it it = options.begin(); it!= options.end(); ++it){
 					std::cout<<it->first<<"\t"<<
 					it->second.long_opt<<"\t"<<
-					it->second.value<<"\t"<<
+					it->second.set_value<<"\t"<<
 					(!it->second.required_met) <<"\t"<<std::endl;
 				}
+				*/
+			}
+		private://Helper Functions
+			//! Checks to see if this is an option
+			bool isOption(const std::string& input){
+				if(input.size()>1)
+					return input[0]=='-';
+				return false;
+			}
+			//! Checks to see if this is a long option
+			bool isLongOption(const std::string& input){
+				if(input.size()>2)
+					return isOption(input) && input[1]=='-';
+				return false;
+			}
+			//! Looks to see if this is an option
+			void ParseOption(str_vec_it& it){
+				//branch on long option or short option.
+				if(isLongOption(*it ) ){
+					std::string long_opt = (*it).substr(2);
+					for(map_it mit = options.begin(); mit!= options.end() ; ++mit){
+						if( mit->second.long_opt == long_opt ){
+							mit->second.was_set = true;
+							ConsumeArguements(mit, it);
+							return;
+						}
+					}
+					std::cout<<"Warning: Unknown long option found: "<<long_opt<<std::endl;
+					printUsage();
+				}
+				else{
+					std::string short_opt = (*it).substr(1);
+					for(int i=0; i< short_opt.size(); i++){
+						map_it mit = options.find( short_opt[i] );
+						if(mit == options.end() ){
+							std::cout<<"Warning: Unkown short option: "<<short_opt[i];
+							continue;
+						}
+						if(mit->first == 'h'){
+							printUsage();
+							exit(0);
+						}
+						mit->second.was_set= true;
+						if(i==short_opt.size()-1)
+							ConsumeArguements(mit, it);
+					}
+				}
+
 			}
 
+			void ConsumeArguements(map_it& mit, str_vec_it& sit){
+				for(int n_args_consumed=0;n_args_consumed < mit->second.n_args; ++n_args_consumed ){
+					//consume the argument
+					str_vec_it tit = sit;
+					tit++;
+					if(mit->second.set_value.size()>0)
+						mit->second.set_value.append(" ");
+					mit->second.set_value.append(*tit);
+					this->raw.erase(tit);
+				}
+			}
 
 
 		};
