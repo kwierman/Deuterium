@@ -1,15 +1,19 @@
-#ifndef Deuterium_RawSocket_h_
-#define Deuterium_RawSocket_h_
+#ifndef Deuterium_RawSocket_hh_
+#define Deuterium_RawSocket_hh_
 
-#include "Deuterium/Networking/Socket.h"
+#include "Deuterium/Networking/Socket.hh"
+#include "Deuterium/Networking/NetworkingException.hh"
 
 #include <vector>
 #include <iostream>
+#include <string>
 
 #include <netinet/ip_icmp.h>//for icmp header
 #include <netinet/ip.h>//for ip header
 #include <netinet/udp.h>//for udp header
 #include <netinet/tcp.h>//for tcp header
+
+#include <unistd.h>//for getting super user
 
 
 #define PCKT_LEN 8192
@@ -152,6 +156,11 @@ Type 253 — RFC3692-style Experiment 1
 				fBuffer = new  char[65536];
 
 				std::cout<<"In raw socket implementation default constructor"<<std::endl;
+
+
+				if(getuid() && geteuid() ){
+					std::cout<<"Not Super User. Will not be able to open up raw sockets"<<std::endl;
+				}
 
 			}
 

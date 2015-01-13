@@ -1,5 +1,5 @@
-#include "Deuterium/DataFormat/StringParser.h"
-#include "Deuterium/Networking/Socket.h"
+#include "Deuterium/DataFormat/StringParser.hh"
+#include "Deuterium/Networking/Socket.hh"
 
 #include <iostream>
 #include <vector>

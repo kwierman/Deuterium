@@ -22,7 +22,7 @@
 namespace Deuterium{
   namespace Networking{
 
-    //!Null Socket Typez
+    //!Null Socket Type
     struct InValidSocket{};
 
     struct RawSocket{
@@ -50,7 +50,7 @@ namespace Deuterium{
       bool fIsPortValid;
 
       //!Default constructor uses template to create socket type,protocol
-      SocketPrototype() throw(NetworkingException) : fSockDesc(-1) {
+      SocketPrototype(): fSockDesc(-1) {
         fIsPortValid=false;
         fSockDesc =socket(PF_INET, SocketType::type, SocketType::protocol);
         fIsPortValid = (fSockDesc>=0);
@@ -63,10 +63,12 @@ namespace Deuterium{
 
       //!  Closes out the socket
       virtual ~SocketPrototype(){
-        if(fSockDesc>0) close(fSockDesc);
+        if(fSockDesc>0) 
+          close(fSockDesc);
         fSockDesc=-1;
         fIsPortValid=false;
       }
+
       //! Needs to be called whenever local information is created or updated in order to fetch back info
       void GetLocalInformation(){
         sockaddr_in addr;
@@ -97,21 +99,15 @@ namespace Deuterium{
           throw NetworkingException("Set of local port failed (bind())", true);
         GetLocalInformation();  
       }
-      //Resolves a service number by 
+      //Resolves a service number by ... TODO:: Fix it, Mack.
       /*
-      unsigned short ResolveService(const std::string& service,const std::string& protocol) {
-        struct servent *serv; 
-        if ((serv = getservbyname(service.c_str(), protocol.c_str())) == NULL)
-          return atoi(service.c_str());
-        else 
-          return ntohs(serv->s_port);  
-      }
+      unsigned short ResolveService(const std::string& service,const std::string& protocol);
       */
       
     };
 
 
-    class TransmitterSocket : public SocketPrototype<>{
+    class TransmitterSocket : public SocketPrototype<TCPSocket>{
     public:
       std::string fRemoteAddress;
       unsigned short fRemotePort;
@@ -151,7 +147,7 @@ namespace Deuterium{
 
     };
 
-    class ListenerSocket : public SocketPrototype<>{
+    class ListenerSocket : public SocketPrototype<TCPSocket>{
     public:
       bool Listen(unsigned queueLength){
         return (listen(fSockDesc, queueLength) < 0);
@@ -164,7 +160,6 @@ namespace Deuterium{
       }
 
     };
-
 
     class BroadcastSocket : public SocketPrototype<UDPSocket>{
       BroadcastSocket(const unsigned short& localPort=0, const std::string& localAddress=""){

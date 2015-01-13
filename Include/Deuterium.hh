@@ -1,7 +1,7 @@
 #ifndef Deuterium_h_
 #define Deuterium_h_
 
-#include "Deuterium/FileSystem/FileSystem.h"
+#include "Deuterium/FileSystem/FileSystem.hh"
 
 /*!
 	\mainpage The Deuterium Libraries
