@@ -6,7 +6,7 @@
 
 namespace Deuterium{
 
-	namespace Exceoption{
+	namespace Exception{
 
 		class NamedException : public std::exception {
 		public:

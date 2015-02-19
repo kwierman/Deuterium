@@ -1,6 +1,6 @@
 
-#include "Deuterium/FileSystem/Directory.hh"
-#include "Deuterium/FileSystem/File.hh"
+//#include "Deuterium/FileSystem/Directory.hh"
+//#include "Deuterium/FileSystem/File.hh"
 
 //#include "Protium/Utilities/SignalCatching.h"
 
@@ -8,7 +8,7 @@
 
 #define DBGMESG std::cout<<__FILE__<<" : "<<__LINE__<<std::endl;
 
-
+/*
 void PrintIndent(const int& n){
 	for(int i=0; i< n; i++) std::cout<<"  ";
 }
@@ -47,14 +47,14 @@ void PrintDirectory( Deuterium::FileSystem::Directory& dir, const int& indent){
 	}
 
 }
-
+*/
 
 
 int main(int argc, char* argv[]){
 	//Protium::Utilities::SignalCatcher::Instance().Setup();
 	//Test file utilities
-	{
-		Deuterium::FileSystem::Directory currDir("/home/kwierman/Documents");
-		PrintDirectory(currDir, 0);
-	}
+	//{
+	//	Deuterium::FileSystem::Directory currDir("/home/kwierman/Documents");
+	//	PrintDirectory(currDir, 0);
+	//}
 }

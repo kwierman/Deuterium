@@ -10,7 +10,8 @@ namespace Deuterium{
 
 
 
-		static inline unsigned SwapWord(const unsigned& word);
+		unsigned SwapWord(const unsigned& word);
+		short SwapShort(const short& word);
 
 
 		static const unsigned bitShortForm = 0x80000000;

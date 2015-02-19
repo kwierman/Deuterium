@@ -3,11 +3,10 @@
 #include <string>//! for returning the string representation of path
 #include <unistd.h>//! 
 #include <stdio.h>
-;
 
 
 
-static inline unsigned Deuterium::FileSystem::SwapWord(const unsigned& word){
+unsigned Deuterium::FileSystem::SwapWord(const unsigned& word){
     return (
         ((word & 0xff000000) >> 24) |
         ((word & 0x00ff0000) >> 8) |
@@ -15,6 +14,14 @@ static inline unsigned Deuterium::FileSystem::SwapWord(const unsigned& word){
         ((word & 0x000000ff) << 24)
     );
 }
+
+short Deuterium::FileSystem::SwapShort(const short& word){
+    return (
+        ((word & 0xff00) >> 8) |
+        ((word & 0x00ff) << 8)
+    );
+}
+
 
 
 std::string Deuterium::FileSystem::cwd(){

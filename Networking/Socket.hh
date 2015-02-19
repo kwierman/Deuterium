@@ -139,9 +139,6 @@ namespace Deuterium{
       bool Send(const void* buffer, int bufferLen){
         return (send(fSockDesc, buffer, bufferLen, 0) < 0);
       }
-      int Receive(void* buffr, int bufferLen) throw(NetworkingException){
-        return recv(fSockDesc, buffr, bufferLen,0);
-      }
 
 
 
@@ -158,6 +155,10 @@ namespace Deuterium{
           throw NetworkingException("Accept failed (accept())", true);
           return new TransmitterSocket(newConnSD);
       }
+      int Receive(void* buffr, int bufferLen) throw(NetworkingException){
+        return recv(fSockDesc, buffr, bufferLen,0);
+      }
+
 
     };
 

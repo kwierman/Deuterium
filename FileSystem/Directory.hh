@@ -7,6 +7,7 @@
 #include <dirent.h>
 #include <sstream>
 
+#include "Deuterium/FileSystem/Path.hh"
 #include "Deuterium/FileSystem/File.hh"
 #include "Deuterium/FileSystem/FileUtilities.hh"
 
@@ -16,7 +17,7 @@ namespace Deuterium {
 
 
 		//! Implementation of directory methods
-		class Directory{
+		class Directory : public Path {
 
 			//! Holds content directory information
 			std::vector<Directory> fDirEntries;
@@ -24,23 +25,19 @@ namespace Deuterium {
 			//! Holds content file information
 			std::vector<File> fFileEntries;
 
-			//! Directory Name
-			std::string fDirName;
 
 		public:
 			//! Default directory constructor
 			Directory();
 
 			//! Construct directory with name
-			Directory(const std::string& dirName );
+			//Directory(const std::string& dirName ) : Path(dirName) {}
 
-			Directory(const Directory& other){
-				fDirName = other.GetName();
-			}
+			Directory(const Directory& other) : Path(other.GetName() ){}
+
+			Directory(const Path& other) : Path(other) {}
 
 			~Directory();
-
-			std::string GetName() const;
 
 			//! Determines validity
 			bool IsValid();
@@ -50,8 +47,6 @@ namespace Deuterium {
 			File FileAt(unsigned i);
 			Directory DirAt(unsigned i);
 			//! Get back the absolute path
-			std::string GetAbsolutePath();
-			std::string simplifyPath();
 		};
 	}
 }
