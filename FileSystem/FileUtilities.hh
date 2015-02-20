@@ -12,6 +12,7 @@ namespace Deuterium{
 
 		unsigned SwapWord(const unsigned& word);
 		short SwapShort(const short& word);
+		double SwapDouble(double word);
 
 
 		static const unsigned bitShortForm = 0x80000000;

@@ -4,7 +4,7 @@ file(GLOB module_headers *.hh)
 
 #Make the library
 add_library(DeuteriumFileSystem SHARED ${module_sources} ${module_headers})
-target_link_libraries(DeuteriumFileSystem ProtiumThreads)
+target_link_libraries(DeuteriumFileSystem ProtiumThreads DeuteriumCompression)
 set_target_properties(DeuteriumFileSystem PROPERTIES LINKER_LANGUAGE CXX)
 install(TARGETS DeuteriumFileSystem DESTINATION lib EXPORT DeuteriumConfig)
 

@@ -31,7 +31,7 @@
 #ifndef ZLIB_H
 #define ZLIB_H
 
-#include "Deuterium/FileSystem/ZLibConf.hh"
+#include "Deuterium/Compression/zconf.hh"
 
 #ifdef __cplusplus
 extern "C" {

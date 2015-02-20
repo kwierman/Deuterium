@@ -22,6 +22,13 @@ short Deuterium::FileSystem::SwapShort(const short& word){
     );
 }
 
+double Deuterium::FileSystem::SwapDouble(double word){
+    unsigned* temp = reinterpret_cast<unsigned*>(&word);
+    unsigned temp2 = SwapWord(*temp);
+    double* dbl = reinterpret_cast<double*>(&temp2);
+    return(*dbl);   
+}
+
 
 
 std::string Deuterium::FileSystem::cwd(){
