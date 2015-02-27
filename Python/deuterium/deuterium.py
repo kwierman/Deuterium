@@ -8,7 +8,7 @@ from optparse import OptionParser
 
 if __name__ == "__main__":
 	usage='usage: deuterium options* command parameter*'
-	version='Kaffee Version '
+	version='Deuterium Version '
 
 	optionparser = OptionParser(usage=usage, version=version)
 	optionparser.add_option('-p', '--processor', dest='processor')

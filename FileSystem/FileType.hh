@@ -41,7 +41,7 @@ namespace Deuterium{
 			char peek(){
 				return fData.peek();
 			}
-			/*
+			
 			template<typename T, int n>
 			std::vector<T> Read(){
 				T buffer[n];
@@ -49,16 +49,16 @@ namespace Deuterium{
 				std::vector<T> buffer2;
 				return buffer2;
 			}
-			*/
-			/*
-			std::vector<char> ReadSome(const unsigned& s){
+			
+			std::vector<char> ReadSome(const unsigned& s, int n){
 				char buffer[n];
 				fData.readsome(buffer, n);
-				std::vector<char> buf = buffer;
-				delete[] buffer;
+				std::vector<char> buf;
+				for(int i=0; i< n;i++)buf.push_back(buffer[i]);
+				//delete[] buffer;
 				return buf;
 			}
-			*/
+			
 			void Put(const char& c){
 				fData.putback(c);
 			}

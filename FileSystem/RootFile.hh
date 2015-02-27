@@ -38,8 +38,9 @@ namespace Deuterium{
 
          void Print(){
             std::cout<<position_in_file<<"\t"<<nBytes<<"\t"<<version<<"\t"<<length<<"\t"<<DateTimeFormat()<<"\t"<<keyLen<<"\t"<<cycle<<"\t"<<seekkey<<"\t"<<seekpdir<<"\t"<<"\""<<name<<"\""<<"\t"<<"\""<<class_name<<"\""<<"\t"<<"\""<<title<<"\"";
-            //for(std::vector<unsigned char>::iterator it = data.begin();it!=data.end();++it)
-               //   std::cout<<(*it)<<" ";
+            /*for(std::vector<unsigned char>::iterator it = data.begin();it!=data.end();++it){
+                              std::cout<<(*it)<<" ";
+            }*/
             std::cout<<std::endl;
          }
          std::string DateTimeFormat(){
@@ -51,7 +52,7 @@ namespace Deuterium{
             unsigned min   = (datime<<20)>>26;
             unsigned sec   = (datime<<26)>>26;
             AsString<unsigned> converter;
-            output+=converter(year);
+            output+=converter(1995+year);
             output+="/";
             output+=converter(month);
             output+="/";
@@ -66,7 +67,15 @@ namespace Deuterium{
             return output;
          }
 
+      };
 
+      struct TObject{
+        unsigned uniqueID;
+        unsigned bits;
+        //takes the input buffer, reads the class info starting from the offset, and returns the number of bytes read (and therefore which can be popped off)
+        size_t Read(std::vector<unsigned char>& buffer, const size_t& offset){
+          return 0;
+        }
       };
 
 
@@ -253,22 +262,25 @@ namespace Deuterium{
             else if(rec.class_name=="TBasket"){
                ReadTBasketRecord(rec);
             }
+            else if(rec.class_name=="TH1F"){
+              ReadTH1FRecord(rec);
+            }
 
          }
 
 
-         int BufferToInt(std::vector<unsigned char>& buffer, int position){
-            int* ret_ptr=(int*)&(buffer[position]);
-            int output=*(ret_ptr);
-            return output;
+         template<typename XType>
+         XType ConvertBuffer(std::vector<unsigned char>& buffer,const size_t& position=0, const bool& swap =false){
+          union {
+            XType          ret;
+            unsigned char  cs[sizeof(XType)];
+          } converter;
+
+          for(int i=0;i<sizeof(XType);i++)
+            converter.cs[i] = swap?  buffer[position+sizeof(XType)-i] : buffer[position+i];
+          return converter.ret;
          }
 
-         double BufferToDouble(std::vector<unsigned char>& buffer, int position){
-            double* ret_ptr=(double*)&(buffer[position]);
-            double output=*(ret_ptr);
-            //output=SwapDouble(output);
-            return output;
-         }
 
          int unzip_header(int *srcsize, unsigned char* src, int *tgtsize){
            // Reads header envelope, and determines target size.
@@ -388,10 +400,17 @@ namespace Deuterium{
             //if(ret_value==0)
                //return out
             /*
+
+            */
+            
+            return out;
+         }
+
+         std::vector<unsigned char> decompress_alt(std::vector<unsigned char>& input, size_t length){
             std::cout<<"Decompressing record..."<<std::endl;
             int ret;
             unsigned have;
-            std::vector<char> out;
+            std::vector<unsigned char> out;
 
             out.resize(length);
             
@@ -412,9 +431,11 @@ namespace Deuterium{
             strm.next_out= (unsigned char*)&(out[0]);
             ret=inflate(&strm, Z_NO_FLUSH);
             (void)inflateEnd(&strm);
-            */
-            
-            return out;
+         }
+
+         void ReadTObjectRecord(Record& rec){
+           std::cout<<"Unique ID: "<<ConvertBuffer<unsigned>(rec.data,0) <<std::endl;
+           std::cout<<"Flag Bits: "<<ConvertBuffer<unsigned>(rec.data,4) <<std::endl;        
          }
 
 
@@ -441,46 +462,48 @@ namespace Deuterium{
             while(decompressed_data.size()<rec.length){
                decompressed_data = decompress(decompressed_data, rec.length);
                if(decompressed_data.size()==0)
-                  break;
+                  return;
             }
-            std::cout<<"Decompressed Data Length: "<<decompressed_data.size()<<" record length: "<<rec.length<<std::endl;
+            int position = 0;
 
-
-
+            unsigned bytecount = ConvertBuffer<unsigned>(decompressed_data, 0);
             
-            short ver1 = (short)decompressed_data[0];
-            short ver2 = (short)decompressed_data[2];
-            short ver3 = (short)decompressed_data[4];
-            std::cout<<"Version: "<<ver1<<","<<ver2<<","<<ver3<<std::endl;
-            //now the first 4 bytes are consumed....
-            unsigned checksum = (unsigned)decompressed_data[6];
+            short ver1 = (ConvertBuffer<short>(decompressed_data,position) ) ;
+            std::cout<<"Version: "<<ver1<<std::endl;
+            position+=2;
+            
+            unsigned checksum = Swap4Bytes<unsigned>(ConvertBuffer<unsigned>(decompressed_data,position+=2) ) ;
             std::cout<<"CheckSum: "<<checksum<<std::endl;
             
-            int buffer_size=(int)decompressed_data[8];
-            int nevBuffSize=(int)decompressed_data[12];
-            int nevBuff = (int)decompressed_data[16];
-            int last = (int)decompressed_data[20];
-            unsigned char flag = (char)decompressed_data[24];
+            int buffer_size = Swap4Bytes<int>(ConvertBuffer<int>(decompressed_data,position+=4) );
+            int nevBuffSize = Swap4Bytes<int>(ConvertBuffer<int>(decompressed_data,position+=4) );
+            int nevBuff     = Swap4Bytes<int>(ConvertBuffer<int>(decompressed_data,position+=4) );
+            int last        = Swap4Bytes<int>(ConvertBuffer<int>(decompressed_data,position+=4) );
+            char flag       = ConvertBuffer<char>(decompressed_data,26);
+
             std::cout<<"\tTBasket Buffer Size: "<<buffer_size<<" nevBuffSize: "<<nevBuffSize<<
-            " nevBuff: "<<nevBuff<<" last: "<<last<<" flag: "<<(unsigned)flag<<std::endl;
-            /*for(int i=0; i< decompressed_data.size();i+=2){
-               unsigned j = SwapWord(BufferToInt(decompressed_data, i));
-               std::cout<<j<<" ";
-            }*/
-            std::cout<<std::endl;
+            " nevBuff: "<<nevBuff<<" last: "<<last<<" flag: "<<(int)flag<<std::endl;
+            return;
+         }
 
+         void ReadTAxisRecord(Record& rec){
 
-/*
+         }
 
+         void ReadTH1FRecord(Record& rec){
+          std::cout<<"Reading TH1F Record"<<std::endl;
+          ReadTObjectRecord(rec);
 
-           for(int i=8; i<decompressed_data.size();i+=2){
-            std::cout<<BufferToDouble(decompressed_data, i)<<" ";
-           }
+          std::cout<<"FNCells: "<<ConvertBuffer<int>(rec.data,8 ) <<std::endl;
+          //read axis three times
+          short bar_offset = ConvertBuffer<short>(rec.data,10);
+          short bar_width = ConvertBuffer<short>(rec.data,12);
+          double entries = ConvertBuffer<double>(rec.data,14);
+          double norm = ConvertBuffer<double>(rec.data, 18);
+          double norm_square = ConvertBuffer<double>(rec.data,22);
+          double norm_avg = ConvertBuffer<double>(rec.data,26);
+          double norm_avg_square = ConvertBuffer<double>(rec.data, 30);
 
-           std::cout<<std::endl;
-
-            
-            */
          }
 
 

@@ -11,7 +11,6 @@ namespace Deuterium{
 
 	namespace FileSystem{
 
-
 		//
 		class File : public Path{
 		public:
@@ -50,12 +49,6 @@ namespace Deuterium{
 			stream& GetInternal(){
 				return fData;
 			}
-
-			/*
-			std::filebuf* GetInternal(){
-				return fData.rdbuf();
-			}
-			*/
 
 			bool Fail(){
 				return fData.fail();

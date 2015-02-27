@@ -24,7 +24,6 @@ namespace Deuterium{
 			Path(const Path& other) : fName(other.fName) {}
 
 			static Path CWD(){
-
 				return Path(cwd());
 			}
 
