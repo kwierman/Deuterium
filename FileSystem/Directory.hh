@@ -46,7 +46,6 @@ namespace Deuterium {
 			unsigned GetNFiles();
 			File FileAt(unsigned i);
 			Directory DirAt(unsigned i);
-			//! Get back the absolute path
 		};
 	}
 }

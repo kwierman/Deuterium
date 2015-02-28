@@ -5,8 +5,10 @@
 #include "Deuterium/FileSystem/FileUtilities.hh"
 #include "Deuterium/Compression/zlib.hh"
 
-#include <iostream>
+#include "Deuterium/FileSystem/Order32.hh"
 
+#include <iostream>
+//Bear in mind that ROOT files are always Big Endian
 
 
 namespace Deuterium{
@@ -23,7 +25,7 @@ namespace Deuterium{
 
       struct Record{
          int position_in_file;
-         int nBytes; 
+         int nBytes;
          short version;
          int length;
          unsigned datime;
@@ -107,7 +109,7 @@ namespace Deuterium{
 
          void Init(){
             PutStreamPosFromBegin(0);
-            
+
             char* root = new char[4];
             Read(root, 4);
 
@@ -133,14 +135,14 @@ namespace Deuterium{
             nBytesname=SwapWord(nBytesname);
             unsigned char units;
             Read(&units, 1);
-            
+
             int compress;
             Read(&compress, 4);
             int seekinfo;
             Read(&seekinfo, 4);
             int nbytesinfo;
             Read(&nbytesinfo, 4);
-            
+
             unsigned short* uuid1 = new unsigned short[9];
             Read(uuid1, 18);
             PutStreamPosFromBegin(begin);
@@ -155,7 +157,7 @@ namespace Deuterium{
                Close();
                return;
             }
-            
+
             Read(&rec.nBytes,4);
             rec.nBytes=SwapWord(rec.nBytes);
             Read(&rec.version, 2);
@@ -168,7 +170,7 @@ namespace Deuterium{
             rec.keyLen = SwapShort(rec.keyLen);
             Read(&rec.cycle, 2);
             rec.cycle = SwapShort(rec.cycle);
-            //At this point, branch to see if 
+            //At this point, branch to see if
             if(rec.version<=1000){
                Read(&rec.seekkey, sizeof(int));
                rec.seekkey=SwapWord(rec.seekkey);
@@ -201,7 +203,7 @@ namespace Deuterium{
                name_buffer[(int)lname]='\0';
                rec.title=name_buffer;
 
- 
+
             }
             else{
                long long lBuffer;
@@ -238,7 +240,7 @@ namespace Deuterium{
                rec.title=name_buffer;
 
 
-               
+
 
             }
 
@@ -253,7 +255,7 @@ namespace Deuterium{
             }
 
 
-               //std::cout<<"Object Version: "<<version_of_object<<std::endl;               
+               //std::cout<<"Object Version: "<<version_of_object<<std::endl;
             rec.Print();
             //PutStreamPosFromBegin(rec.position_in_file+rec.nBytes);
             if(rec.class_name=="TFile"){
@@ -402,7 +404,7 @@ namespace Deuterium{
             /*
 
             */
-            
+
             return out;
          }
 
@@ -413,7 +415,7 @@ namespace Deuterium{
             std::vector<unsigned char> out;
 
             out.resize(length);
-            
+
             z_stream strm;
             strm.zalloc = Z_NULL;
             strm.zfree = Z_NULL;
@@ -435,7 +437,7 @@ namespace Deuterium{
 
          void ReadTObjectRecord(Record& rec){
            std::cout<<"Unique ID: "<<ConvertBuffer<unsigned>(rec.data,0) <<std::endl;
-           std::cout<<"Flag Bits: "<<ConvertBuffer<unsigned>(rec.data,4) <<std::endl;        
+           std::cout<<"Flag Bits: "<<ConvertBuffer<unsigned>(rec.data,4) <<std::endl;
          }
 
 
@@ -467,14 +469,14 @@ namespace Deuterium{
             int position = 0;
 
             unsigned bytecount = ConvertBuffer<unsigned>(decompressed_data, 0);
-            
+
             short ver1 = (ConvertBuffer<short>(decompressed_data,position) ) ;
             std::cout<<"Version: "<<ver1<<std::endl;
             position+=2;
-            
+
             unsigned checksum = Swap4Bytes<unsigned>(ConvertBuffer<unsigned>(decompressed_data,position+=2) ) ;
             std::cout<<"CheckSum: "<<checksum<<std::endl;
-            
+
             int buffer_size = Swap4Bytes<int>(ConvertBuffer<int>(decompressed_data,position+=4) );
             int nevBuffSize = Swap4Bytes<int>(ConvertBuffer<int>(decompressed_data,position+=4) );
             int nevBuff     = Swap4Bytes<int>(ConvertBuffer<int>(decompressed_data,position+=4) );
@@ -508,8 +510,16 @@ namespace Deuterium{
 
 
       public:
-         RootFile(const Path& path) : InputFile(path) {}
-         
+         RootFile(const Path& path) : InputFile(path) {
+           if(O32_HOST_ORDER == O32_BIG_ENDIAN){
+             std::cout<<"Host order aligns with ROOT File Order"<<std::endl;
+           }
+           else{
+             std::cout<<"Host order misalignment with ROOT Standard. Swapping"<<std::endl;
+           }
+
+         }
+
       };
    }
 }
