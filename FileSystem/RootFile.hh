@@ -239,9 +239,6 @@ namespace Deuterium{
                name_buffer[(int)lname]='\0';
                rec.title=name_buffer;
 
-
-
-
             }
 
             //consume data
@@ -266,6 +263,9 @@ namespace Deuterium{
             }
             else if(rec.class_name=="TH1F"){
               ReadTH1FRecord(rec);
+            }
+            else if(rec.class_name == "TList"){
+              ReadTListRecord(rec);
             }
 
          }
@@ -295,7 +295,21 @@ namespace Deuterium{
            if (!(src[0] == 'Z' && src[1] == 'L' && src[2] == Z_DEFLATED) &&
                !(src[0] == 'C' && src[1] == 'S' && src[2] == Z_DEFLATED) &&
                !(src[0] == 'X' && src[1] == 'Z' && src[2] == 0)) {
+            
+              std::cout<<"ZLIB Header Unzip Failed"<<std::endl;
+              if( src[0] != 'Z' ){
+                std::cout<<"Can't detect first character:"<<src[0]<<std::endl;
+              }
+              if(src[1]!='L'){
+                std::cout<<"Can't find the second character"<<std::endl;
+              }
+              if(src[2]!=Z_DEFLATED){
+                std::cout<<"Last Character: "<<src[2]<<" != "<<Z_DEFLATED<<std::endl;
+              }
+
+
              return 1;
+
            }
 
            *srcsize = 9 + ((long)src[3] | ((long)src[4] << 8) | ((long)src[5] << 16));
@@ -389,22 +403,12 @@ namespace Deuterium{
            *irep = isize;
          }
 
-         std::vector<unsigned char> decompress(std::vector<unsigned char>& input, size_t length){
+         std::vector<unsigned char> decompress(std::vector<unsigned char>& input, size_t length, int offset){
             std::vector<unsigned char> out;
-
             int nin, nbuf,nout;
-            int ret_value = unzip_header(&nin, &(input[19]),&nbuf );
+            int ret_value = unzip_header(&nin, &(input[offset]),&nbuf );
             out.resize(nbuf);
-            ret_value = unzip(&nin, &(input[19]), &nbuf, &(out[0]), &nout);
-
-
-            //std::cout<<"Header unzip returned: "<<ret_value<<std::endl;
-            //if(ret_value==0)
-               //return out
-            /*
-
-            */
-
+            ret_value = unzip(&nin, &(input[offset]), &nbuf, &(out[0]), &nout);
             return out;
          }
 
@@ -456,13 +460,55 @@ namespace Deuterium{
             */
          }
 
+         int ReadTName(Record& rec, const int& start, std::string& name){
+          //read the tname from the record at the starting position
+          char input = 'a';
+          int index=start;
+          while(input!='\0'){
+            input = rec.data[index++];
+            name+=input;
+          }
+          std::cout<<std::endl;
+          return index+1;
+         }
 
+         void ReadTListRecord(Record& rec){
+        
+            std::vector<unsigned char> decompressed_data = rec.data;
+            while(decompressed_data.size()<rec.length){
+               decompressed_data = decompress(decompressed_data, rec.length,0);
+               if(decompressed_data.size()==0)
+                  return;
+            }
+            std::cout<<"Successfully decompressed TList Record"<<std::endl;
+            for(std::vector<unsigned char>::iterator it = decompressed_data.begin(); it!=decompressed_data.end();++it){
+              std::cout<<(*it)<<" ";
+            }
+            std::cout<<std::endl;
+            rec.data = decompressed_data;
+            ReadTObjectRecord(rec);
+            std::cout<<std::endl;
+            std::string tname;
+            int index = ReadTName(rec, 29,tname);
+            std::cout<<"Found TName at index: "<<index<<" , "<<tname<<std::endl;
 
+            int nobjects = /*Swap4Bytes<int>*/(ConvertBuffer<int>(rec.data,index+=4) );
+
+            std::cout<<"nObjects: "<<nobjects<<" For Size: "<<decompressed_data.size()-index<<std::endl; 
+            std::cout<<"Average Object Size: "<<decompressed_data.size()/nobjects<<std::endl;
+            int starting_index = index+16+8;
+            for(int i=0;i<nobjects;i++){
+              //read out each object
+             //std::cout<<"Unique ID: "<<ConvertBuffer<unsigned>(rec.data,starting_index+=4) <<std::endl;
+             //std::cout<<"Flag Bits: "<<ConvertBuffer<unsigned>(rec.data,starting_index+=4) <<std::endl;            
+
+            }
+         }
 
          void ReadTBasketRecord(Record& rec){
             std::vector<unsigned char> decompressed_data = rec.data;
             while(decompressed_data.size()<rec.length){
-               decompressed_data = decompress(decompressed_data, rec.length);
+               decompressed_data = decompress(decompressed_data, rec.length,19);
                if(decompressed_data.size()==0)
                   return;
             }
@@ -505,9 +551,7 @@ namespace Deuterium{
           double norm_square = ConvertBuffer<double>(rec.data,22);
           double norm_avg = ConvertBuffer<double>(rec.data,26);
           double norm_avg_square = ConvertBuffer<double>(rec.data, 30);
-
          }
-
 
       public:
          RootFile(const Path& path) : InputFile(path) {
@@ -517,9 +561,7 @@ namespace Deuterium{
            else{
              std::cout<<"Host order misalignment with ROOT Standard. Swapping"<<std::endl;
            }
-
          }
-
       };
    }
 }

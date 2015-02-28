@@ -21,4 +21,6 @@ int main(int argc, char* argv[]){
 	std::cout<<"pos"<<"\t"<<"nBytes"<<"\t"<<"version"<<"\t"<<"length"<<"\t"<<"datime"<<"\t"<<"keyLen"<<"\t"<<"cycle"<<"\t"<<"seekkey"<<"\t"<<"seekpdir"<<"\t"<<"name"<<"\t"<<"class_name"<<"\t"<<"title"<<std::endl;
 	while(!input.eof() && input.IsOpen() )
 		input.ReadRecord();
+
+	std::cout<<"Size of int: "<<sizeof(int)<<std::endl;
 }
